@@ -1,5 +1,3 @@
-
-
 module solar (clk, LSN, LSE, LSS, LSW, MN, ME, MS, MW)
 input [7:0] LSN, LSE, LSS, LSW;
 output MN, ME, MS, MW;

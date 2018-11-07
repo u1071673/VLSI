@@ -12,7 +12,7 @@ begin
 	else state = next_state;
 end
 
-// NEXT STATE SEQUENTIAL LOGIC
+// NEXT STATE COMBINATIONAL LOGIC
 always@(LSN or LSE or LSS or LSW or state)
 begin
 	case(state)
