@@ -2,3 +2,4 @@ final_project.mpf
 *.bak
 final_project.cr.mti
 transcript
+.nfs*
