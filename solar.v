@@ -19,7 +19,7 @@ assign mw = (state == s_mw);
 always@(posedge clk)
 begin
 	if(rst) state = s_idle;
-	else state = next_state;
+	else state = next_state;s
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
