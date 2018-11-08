@@ -1,3 +1,4 @@
+// TODO: Change Threshold values from degrees to a 0-255 value.
 `define GE90_TH 85
 `define IDLE_HIGH_TH 90
 `define IDLE_LOW_TH 70

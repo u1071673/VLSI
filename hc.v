@@ -1,36 +1,35 @@
 `define TH 8'd10
 
-module hc(clk, rst, AT, GT, out)
-	input clk;
-	input rst;
-	input [7:0] AT, GT;
-	output AT_out, GT_out;
-	parameter s_AT_out = 1, s_GT_out = 0;
-	reg state, next_state;
-	
-	// OUTPUT COMBINATIONAL LOGIC
-	assign AT_out = (state == s_AT_out);
-	assign GT_out = (state == s_GT_out);
-	
-	// UPDATE STATE SEQUENTIAL LOGIC
-	always@(posedge clk)
-	begin
-		if(rst) state = s_AT_out;
-		else state = next_state;s
-	end
-	
-	// NEXT STATE COMBINATIONAL LOGIC
-	always@(AT or GT or state)
-	begin
+module hc(clk, rst, ts1, ts2, out);
+input clk;
+input rst;
+input [7:0] ts1, ts2;
+output out;
+parameter s_1g2 = 2'd0, s_idle = 2'd1; // s_idle is that same as s_2ge1
+reg state, next_state;
+
+// OUTPUT COMBINATIONAL LOGIC
+assign out = (state == s_1g2); // If ts1 is greater than ts2 then output high.
+
+// UPDATE STATE SEQUENTIAL LOGIC
+always@(posedge clk)
+begin
+	if(rst) state = s_idle;
+	else state = next_state;
+end
+
+// NEXT STATE COMBINATIONAL LOGIC
+always@(ts1 or ts2 or state)
+begin
 	case(state)
-		s_GT_out: if((GT < (AT-`TH)) next_state = s_AT_out;
-		default: 
+		s_1g2 : if(ts1 < (ts2 - `TH)) next_state = s_idle;
+		default: // s_2ge1:
 		begin
-			if(AT < (GT - `TH)) next_state = s_GT_out;
-			else if(AT > (GT - `TH)) next_state = s_AT_out;
-			else next_state = next_state;
+			if(ts2 < (ts1 - `TH)) next_state = s_1g2;
+			else next_state = s_idle;
 		end
 	endcase
-		
-	end
+			
+end
+
 endmodule
