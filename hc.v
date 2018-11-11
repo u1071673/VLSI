@@ -1,11 +1,11 @@
 `define TH 8'd10
 
 module hc(
-	input wire clk,
-	input wire rst,
-	input wire [7:0] ts1, ts2,
-	output wire out
-	);
+input wire clk,
+input wire rst,
+input wire [7:0] ts1, ts2,
+output wire out
+);
 
 parameter s_1g2 = 2'd0, s_idle = 2'd1; // s_idle is that same as s_2ge1
 reg state, next_state;

@@ -1,11 +1,12 @@
 `define TH 8'd10
 
 module solar (
-	input wire clk,
-	input wire rst,
-	input wire [7:0] lsn, lse, lss, lsw,
-	output mn, me, ms, mw
-	);
+input wire clk,
+input wire rst,
+input wire [7:0] lsn, lse, lss, lsw,
+output wire mn, me, ms, mw
+);
+
 parameter [2:0] s_mn = 3'd0, s_me = 3'd1, s_ms = 3'd2, s_mw = 3'd3, s_idle = 3'd4;
 reg [2:0] state, next_state;
 

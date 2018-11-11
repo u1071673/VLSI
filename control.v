@@ -5,12 +5,12 @@
 `define LE70_TH 75
 
 module control (
-	input wire clk,
-	input wire rst,
-	input wire [7:0] gt,
-	input wire t_g_gt,
-	output wire out
-	);
+input wire clk,
+input wire rst,
+input wire [7:0] gt,
+input wire t_g_gt,
+output wire out
+);
 
 parameter [1:0] s_ge90 = 2'd0, s_le70 = 2'd1, s_idle = 2'd2;
 reg [1:0] state, next_state;
