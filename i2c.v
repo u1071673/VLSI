@@ -4,17 +4,16 @@ input wire clk,
 input wire rst,
 input reg [6:0] addr, /* Set this to the address of the slave. */
 input reg [6:0] data, /* Set this to the data we want to send to the slave */
-output reg sda,
-output reg scl
+output sda,
+output scl
 );
 
 parameter [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_WACK1 = 8'd4, STATE_DATA = 8'd5, STATE_WACK2 = 8'd6, STATE_STOP = 8'd7;
 
-reg [7:0] state, count;
+reg [7:0] state, next_state, count, next_count;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign sda =
-  (state == STATE_IDLE)   || /* Set sda high when in STATE_IDLE */
+assign sda = (state == STATE_IDLE)   || /* Set sda high when in STATE_IDLE */
   (state == STATE_START)  || /* Set sda high when in STATE_START */
   (state == STATE_RW)     || /* Set sda high when in STATE_RW */
   (state == STATE_STOP)   || /* Set sda high when in STATE_STOP */
@@ -65,7 +64,7 @@ begin
       state = STATE_WACK1;
     end
 
-    STATE_WACK:
+    STATE_WACK1:
     begin
       state = STATE_DATA;
       next_count = 7;
