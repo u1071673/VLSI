@@ -7,16 +7,16 @@ input wire [7:0] ts1, ts2,
 output wire out
 );
 
-parameter s_1g2 = 2'd0, s_idle = 2'd1; // s_idle is that same as s_2ge1
+parameter STATE_1G2 = 2'd0, STATE_IDLE = 2'd1; // STATE_IDLE is that same as s_2ge1
 reg state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign out = (state == s_1g2); // If ts1 is greater than ts2 then output high.
+assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output high.
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-	if(rst) state = s_idle;
+	if(rst) state = STATE_IDLE;
 	else state = next_state;
 end
 
@@ -24,14 +24,14 @@ end
 always@(ts1 or ts2 or state)
 begin
 	case(state)
-		s_1g2 : if(ts1 < (ts2 - `TH)) next_state = s_idle;
+		STATE_1G2 : if(ts1 < (ts2 - `TH)) next_state = STATE_IDLE;
 		default: // s_2ge1:
 		begin
-			if(ts2 < (ts1 - `TH)) next_state = s_1g2;
-			else next_state = s_idle;
+			if(ts2 < (ts1 - `TH)) next_state = STATE_1G2;
+			else next_state = STATE_IDLE;
 		end
 	endcase
-			
+
 end
 
 endmodule

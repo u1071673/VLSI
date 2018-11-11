@@ -12,16 +12,16 @@ input wire t_g_gt,
 output wire out
 );
 
-parameter [1:0] s_ge90 = 2'd0, s_le70 = 2'd1, s_idle = 2'd2;
+parameter [1:0] STATE_GE90 = 2'd0, STATE_LE70 = 2'd1, STATE_IDLE = 2'd2;
 reg [1:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign out = (state == s_ge90 && gt > `GE90_TH && (!t_g_gt)) || (state == s_le70 && gt < `LE70_TH && t_g_gt);
+assign out = (state == STATE_GE90 && gt > `GE90_TH && (!t_g_gt)) || (state == STATE_LE70 && gt < `LE70_TH && t_g_gt);
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-	if(rst) state = s_idle;
+	if(rst) state = STATE_IDLE;
 	else state = next_state;
 end
 
@@ -29,16 +29,16 @@ end
 always@(gt or state)
 begin
 	case(state)
-		s_ge90: if(gt <= `GE90_TH) next_state = s_idle;
-		s_le70: if(gt >= `LE70_TH) next_state = s_idle;
-		default: // s_idle:
+		STATE_GE90: if(gt <= `GE90_TH) next_state = STATE_IDLE;
+		STATE_LE70: if(gt >= `LE70_TH) next_state = STATE_IDLE;
+		default: // STATE_IDLE:
 		begin
-			if(gt >= `IDLE_HIGH_TH) next_state = s_ge90;
-			else if (gt <= `IDLE_LOW_TH) next_state = s_le70;
-			else next_state = s_idle;
+			if(gt >= `IDLE_HIGH_TH) next_state = STATE_GE90;
+			else if (gt <= `IDLE_LOW_TH) next_state = STATE_LE70;
+			else next_state = STATE_IDLE;
 		end
 	endcase
-			
+
 end
 
 endmodule
