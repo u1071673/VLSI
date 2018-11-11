@@ -12,7 +12,7 @@ input wire t_g_gt,
 output wire out
 );
 
-parameter [1:0] STATE_IDLE = 2'd0, STATE_GE90 = 2'd1, STATE_LE70 = 2'd2;
+localparam [1:0] STATE_IDLE = 2'd0, STATE_GE90 = 2'd1, STATE_LE70 = 2'd2;
 reg [1:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC

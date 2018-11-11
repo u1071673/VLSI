@@ -3,12 +3,12 @@ module i2c (
 input wire clk,
 input wire rst,
 input reg [6:0] addr, /* Set this to the address of the slave. */
-input reg [6:0] data, /* Set this to the data we want to send to the slave */
+input reg [7:0] data, /* Set this to the data we want to send to the slave */
 output sda,
 output scl
 );
 
-parameter [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_WACK1 = 8'd4, STATE_DATA = 8'd5, STATE_WACK2 = 8'd6, STATE_STOP = 8'd7;
+localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_WACK1 = 8'd4, STATE_DATA = 8'd5, STATE_WACK2 = 8'd6, STATE_STOP = 8'd7;
 
 reg [7:0] state, next_state, count, next_count;
 reg scl_enable, next_scl_enable;
@@ -23,6 +23,8 @@ assign sda = (state == STATE_IDLE)   || /* Set sda high when in STATE_IDLE */
   (state == STATE_DATA) ? data[count] : /* When in STATE_DATA set sda to data[count] */
   1'd0 /* Set sda low when none of the conditions above are met */
   );
+
+assign scl = scl_enable ? clk : 1'd1;
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)

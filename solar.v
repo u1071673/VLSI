@@ -7,7 +7,7 @@ input wire [7:0] lsn, lse, lss, lsw,
 output wire mn, me, ms, mw
 );
 
-parameter [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS = 3'd3, STATE_MW = 3'd4;
+localparam [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS = 3'd3, STATE_MW = 3'd4;
 reg [2:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC

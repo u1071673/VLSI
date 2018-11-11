@@ -7,7 +7,7 @@ input wire [7:0] ts1, ts2,
 output wire out
 );
 
-parameter STATE_1G2 = 2'd0, STATE_2GE1 = 2'd1;
+localparam STATE_1G2 = 2'd0, STATE_2GE1 = 2'd1;
 reg state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
