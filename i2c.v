@@ -44,7 +44,7 @@ begin
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
-always@(state)
+always@(state or count or scl_enable)
 begin
   next_scl_enable = 1'd0;
 	case(state)

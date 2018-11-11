@@ -1,11 +1,11 @@
 
-`timescale 1ns / 1ns
-module i2c_tb  ; 
+
+module i2c_tb ; 
 
   // INPUTS
   reg rst; 
-  reg [7:0] data; 
   reg clk;
+  reg [7:0] data; 
   reg [6:0] addr; 
 
   // OUTPUTS
@@ -13,13 +13,14 @@ module i2c_tb  ;
   wire scl;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
-  i2c UUT(
+  i2c utt(
       .sda(sda),
       .rst(rst),
       .scl(scl),
       .data(data),
       .clk(clk),
-      .addr(addr)); 
+      .addr(addr)
+  ); 
 
  always #1 clk = ~clk;
 
@@ -30,10 +31,12 @@ module i2c_tb  ;
  addr  = 7'h50 ;	  
  data  = 8'haa ;
  // WAIT 100ns FOR GLOBAL RESET TO FINISH
- #100
+ #10;
  // ADD STIMULUS HERE
  rst = 0;
- $finish;
+
+ #100;
+ 
  end
 
 endmodule
