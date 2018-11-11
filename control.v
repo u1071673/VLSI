@@ -12,7 +12,7 @@ input wire t_g_gt,
 output wire out
 );
 
-parameter [1:0] STATE_GE90 = 2'd0, STATE_LE70 = 2'd1, STATE_IDLE = 2'd2;
+parameter [1:0] STATE_IDLE = 2'd0, STATE_GE90 = 2'd1, STATE_LE70 = 2'd2;
 reg [1:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
@@ -29,13 +29,17 @@ end
 always@(gt or state)
 begin
 	case(state)
-		STATE_GE90: if(gt <= `GE90_TH) next_state = STATE_IDLE;
-		STATE_LE70: if(gt >= `LE70_TH) next_state = STATE_IDLE;
-		default: // STATE_IDLE:
+		STATE_IDLE:
 		begin
 			if(gt >= `IDLE_HIGH_TH) next_state = STATE_GE90;
 			else if (gt <= `IDLE_LOW_TH) next_state = STATE_LE70;
 			else next_state = STATE_IDLE;
+		end
+		STATE_GE90: if(gt <= `GE90_TH) next_state = STATE_IDLE;
+		STATE_LE70: if(gt >= `LE70_TH) next_state = STATE_IDLE;
+		default:
+		begin
+			// TODO: Figure out what to do for default case.
 		end
 	endcase
 

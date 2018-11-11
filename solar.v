@@ -7,7 +7,7 @@ input wire [7:0] lsn, lse, lss, lsw,
 output wire mn, me, ms, mw
 );
 
-parameter [2:0] STATE_MN = 3'd0, STATE_ME = 3'd1, STATE_MS = 3'd2, STATE_MW = 3'd3, STATE_IDLE = 3'd4;
+parameter [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS = 3'd3, STATE_MW = 3'd4;
 reg [2:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
@@ -28,17 +28,21 @@ end
 always@(lsn or lse or lss or lsw or state)
 begin
 	case(state)
-		STATE_MN: if((lsn + `TH) < lss) next_state = STATE_IDLE;
-		STATE_ME: if((lse + `TH) < lsw) next_state = STATE_IDLE;
-		STATE_MS: if((lss + `TH) < lsn) next_state = STATE_IDLE;
-		STATE_MW: if((lsw + `TH) < lse) next_state = STATE_IDLE;
-		default: // STATE_IDLE:
+		STATE_IDLE:
 		begin
 			if(lsn > (lss + `TH)) next_state = STATE_MN;
 			else if(lse > (lsw + `TH)) next_state = STATE_ME;
 			else if(lss > (lsn + `TH)) next_state = STATE_MS;
 			else if(lsw > (lse + `TH)) next_state = STATE_MW;
 			else next_state = STATE_IDLE;
+		end
+		STATE_MN: if((lsn + `TH) < lss) next_state = STATE_IDLE;
+		STATE_ME: if((lse + `TH) < lsw) next_state = STATE_IDLE;
+		STATE_MS: if((lss + `TH) < lsn) next_state = STATE_IDLE;
+		STATE_MW: if((lsw + `TH) < lse) next_state = STATE_IDLE;
+		default
+		begin
+			// TODO: Figure out what to do for default case.
 		end
 	endcase
 
