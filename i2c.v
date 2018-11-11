@@ -11,6 +11,7 @@ output scl
 parameter [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_WACK1 = 8'd4, STATE_DATA = 8'd5, STATE_WACK2 = 8'd6, STATE_STOP = 8'd7;
 
 reg [7:0] state, next_state, count, next_count;
+reg scl_enable, next_scl_enable;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign sda = (state == STATE_IDLE)   || /* Set sda high when in STATE_IDLE */
@@ -29,18 +30,21 @@ begin
 	if(rst)
   begin
     state = STATE_IDLE;
-    count = 0;
+    count = 8'd0;
+    scl_enable = 1'd0;
   end
 	else
   begin
     state = next_state;
     count = next_count;
+    scl_enable = next_scl_enable;
   end
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
 always@(state)
 begin
+  next_scl_enable = 1'd0;
 	case(state)
 		STATE_IDLE:
 		begin
@@ -50,34 +54,39 @@ begin
     STATE_START:
 		begin
 			next_state = STATE_ADDR;
-      next_count = 6;
+      next_count = 8'd6;
 		end
 
     STATE_ADDR:
     begin
+      next_scl_enable = 1'd1;
       if(count == 0) next_state = STATE_WACK1;
-      else next_count = count - 1;
+      else next_count = count - 8'd1;
     end
 
     STATE_RW:
     begin
+      next_scl_enable = 1'd1;
       state = STATE_WACK1;
     end
 
     STATE_WACK1:
     begin
+      next_scl_enable = 1'd1;
       state = STATE_DATA;
       next_count = 7;
     end
 
     STATE_DATA:
     begin
+      next_scl_enable = 1'd1;
       if(count == 0) next_state = STATE_WACK2;
-      else next_count = count - 1;
+      else next_count = count - 8'd1;
     end
 
     STATE_WACK2:
     begin
+      next_scl_enable = 1'd1;
       next_state = STATE_STOP;
     end
 
