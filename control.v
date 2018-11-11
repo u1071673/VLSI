@@ -4,17 +4,19 @@
 `define IDLE_LOW_TH 70
 `define LE70_TH 75
 
-module solar (clk, rst, tsgh, ts_g_tsgh, out);
-input clk;
-input rst;
-input ts_g_tsgh;
-input [7:0] tsgh;
-output out;
+module control (
+	input wire clk,
+	input wire rst,
+	input wire [7:0] gt,
+	input wire t_g_gt,
+	output wire out
+	);
+
 parameter [1:0] s_ge90 = 2'd0, s_le70 = 2'd1, s_idle = 2'd2;
 reg [1:0] state, next_state;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign out = (state == s_ge90 && tsgh > `GE90_TH && (!ts_g_tsgh)) || (state == s_le70 && tsgh < `LE70_TH && ts_g_tsgh);
+assign out = (state == s_ge90 && gt > `GE90_TH && (!t_g_gt)) || (state == s_le70 && gt < `LE70_TH && t_g_gt);
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
@@ -24,15 +26,15 @@ begin
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
-always@(tsgh or state)
+always@(gt or state)
 begin
 	case(state)
-		s_ge90: if(tsgh <= `GE90_TH) next_state = s_idle;
-		s_le70: if(tsgh >= `LE70_TH) next_state = s_idle;
+		s_ge90: if(gt <= `GE90_TH) next_state = s_idle;
+		s_le70: if(gt >= `LE70_TH) next_state = s_idle;
 		default: // s_idle:
 		begin
-			if(tsgh >= `IDLE_HIGH_TH) next_state = s_ge90;
-			else if (tsgh <= `IDLE_LOW_TH) next_state = s_le70;
+			if(gt >= `IDLE_HIGH_TH) next_state = s_ge90;
+			else if (gt <= `IDLE_LOW_TH) next_state = s_le70;
 			else next_state = s_idle;
 		end
 	endcase
