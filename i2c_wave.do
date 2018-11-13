@@ -7,9 +7,7 @@ add wave -noupdate /i2c_tb/rst
 add wave -noupdate /i2c_tb/utt/state
 add wave -noupdate /i2c_tb/utt/count
 add wave -noupdate /i2c_tb/utt/scl_enable
-add wave -noupdate /i2c_tb/utt/next_state
-add wave -noupdate /i2c_tb/utt/next_count
-add wave -noupdate /i2c_tb/utt/next_scl_enable
+add wave -noupdate /i2c_tb/utt/rw
 TreeUpdate [SetDefaultTree]
 WaveRestoreCursors {{Cursor 1} {12 ns} 0}
 quietly wave cursor active 1
