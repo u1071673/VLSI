@@ -15,29 +15,32 @@ module i2c_tb;
   wire scl;
   wire ready;
 
+  
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
   i2c utt(
       .sda(sda),
       .ready(ready),
       .rst(rst),
-      .rw(rw),
       .start(start),
       .scl(scl),
       .data(data),
+      .rw(rw),
       .clk(clk),
       .addr(addr)
   );
 
   always #1 clk = ~clk;
 
+  assign sda = (utt.state == 4) ? 1'b0 : 1'bz;
+
   initial begin
     // INITIALIZE INPUTS
     clk = 0;
     rst = 1;
     addr  = 7'h50 ;
-    data  = 8'haa ;
+    data  = 8'h55 ;
     rw = 0;
-    // WAIT 100ns FOR GLOBAL RESET TO FINISH
+    // WAIT 10ns FOR GLOBAL RESET TO FINISH
     #10;
     // ADD STIMULUS HERE
     rst = 0;

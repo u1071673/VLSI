@@ -10,6 +10,7 @@ output wire out
 localparam STATE_2GE1 = 2'd0, STATE_1G2 = 2'd1;
 reg [1:0] state, next_state;
 
+
 // OUTPUT COMBINATIONAL LOGIC
 assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output high.
 
