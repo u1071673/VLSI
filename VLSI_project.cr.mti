@@ -1,0 +1,60 @@
+/home/jasonj/Documents/ece6710/VLSI/control.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/control.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module control
+
+Top level modules:
+	control
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/main.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/main.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/solar.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/solar.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module solar
+
+Top level modules:
+	solar
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/i2c.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/i2c.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module i2c
+
+Top level modules:
+	i2c
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/uart_tx.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/uart_tx.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module uart_tx
+
+Top level modules:
+	uart_tx
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/hc.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/hc.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module hc
+
+Top level modules:
+	hc
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/i2c_tb.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/i2c_tb.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module i2c_tb
+
+Top level modules:
+	i2c_tb
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/uart_tx_tb.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/uart_tx_tb.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module uart_tx_tb
+
+Top level modules:
+	uart_tx_tb
+
+} {} {}} /home/jasonj/Documents/ece6710/VLSI/hc_tb.v {1 {vlog -work work -vopt -stats=none /home/jasonj/Documents/ece6710/VLSI/hc_tb.v
+Model Technology ModelSim SE-64 vlog 10.5c Compiler 2016.07 Jul 20 2016
+-- Compiling module hc_tb
+
+Top level modules:
+	hc_tb
+
+} {} {}}
