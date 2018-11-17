@@ -4,7 +4,7 @@ module i2c (
   input wire rst,
   input wire start,
   input wire [6:0] addr, /* Set this to the address of the slave. */
-  input wire [15:0] data, /* Set this to the data we want to send to the slave */
+  input wire [15:0] data, /* Set this to the data we want to send to the slave. If we are reading this should be 16'd0 */
   input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
   input wire rw, /* 0 = write, 1 = read */
   inout wire sda,
@@ -53,7 +53,7 @@ reg initialized;
         end
         STATE_R_MSBYTE, STATE_R_LSBYTE:
         begin
-          latched_data[count] = (sda === 1'bz) || (sda == 1'b1);
+          latched_data[count] <= (sda === 1'bz) || (sda == 1'b1);
         end
         STATE_MASTER_WACK:
         begin
@@ -126,7 +126,7 @@ reg initialized;
 
     STATE_SLAVE_WACK: // slave pulls sda low for ack.
     begin
-      if(sda === 1'bz) // ~ACK
+      if(sda === 1'bz || sda === 1'b1) // ~ACK
       begin
         next_state = STATE_STOP;
         next_sda_enable = 1'b1;
@@ -171,9 +171,11 @@ reg initialized;
       begin
         next_scl_enable = 1'b1;
         next_state = STATE_R_LSBYTE;
+        next_count = 8'd7;
       end
       else 
       begin
+        next_sda_enable = 1'b1;
         next_state = STATE_STOP;
       end
     end
