@@ -1,11 +1,11 @@
 `define TH 8'd10 // 10 Degrees celcius
 
 module hc(
-input wire clk,
-input wire rst,
-input wire [7:0] ts1, ts2,
-output wire out
-);
+	input wire clk,
+	input wire rst,
+	input wire [7:0] ts1, ts2,
+	output wire out
+	);
 
 localparam STATE_2GE1 = 2'd0, STATE_1G2 = 2'd1;
 reg [1:0] state, next_state;
@@ -25,17 +25,17 @@ end
 always@(ts1 or ts2 or state)
 begin
 	case(state)
-	STATE_2GE1:
-	begin
-		if(ts1 > 8'd0 && ts2 > 8'd0)
+		STATE_2GE1:
 		begin
-			if(ts2 < (ts1 - `TH)) next_state = STATE_1G2;
-			else next_state = STATE_2GE1;
+			if(ts1 > 8'd0 && ts2 > 8'd0)
+			begin
+				if(ts2 < (ts1 - `TH)) next_state = STATE_1G2;
+				else next_state = STATE_2GE1;
+			end
 		end
-	end
-	STATE_1G2 : 
+		STATE_1G2 : 
 		if(ts1 < (ts2 - `TH)) next_state = STATE_2GE1;
-	default:
+		default:
 		next_state = STATE_2GE1;
 	endcase
 
