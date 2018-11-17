@@ -13,7 +13,7 @@ module i2c (
   output wire ready
   );
 
-localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSB = 8'd7, STATE_R_MSB = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
+localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSBYTE = 8'd7, STATE_R_MSBYTE = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
 reg [15:0] latched_data;
 reg [7:0] state, next_state, count, next_count;
 reg [6:0] latched_addr;
@@ -53,8 +53,11 @@ reg initialized;
         end
         STATE_R_MSBYTE, STATE_R_LSBYTE:
         begin
-          latched_two_bytes <= 1'b0;
           latched_data[count] = (sda === 1'bz) || (sda == 1'b1);
+        end
+        STATE_MASTER_WACK:
+        begin
+          latched_two_bytes <= 1'b0;
         end
         default:
         begin
@@ -164,8 +167,15 @@ reg initialized;
 
     STATE_MASTER_WACK:
     begin
-      next_state = STATE_RDATA;
-      next_scl_enable = 1'b1;
+      if(latched_two_bytes) // read another byte.
+      begin
+        next_scl_enable = 1'b1;
+        next_state = STATE_R_LSBYTE;
+      end
+      else 
+      begin
+        next_state = STATE_STOP;
+      end
     end
 
     STATE_W_MSBYTE:
@@ -196,31 +206,21 @@ reg initialized;
       next_scl_enable = 1'b1;
     end
 
-    STATE_R_MSB:
+    STATE_R_MSBYTE:
     begin
       if(count == 8)
       begin
-        next_state = STATE_MASTER_WACK;
-        next_sda_enable = 1'b1;
+        next_state = STATE_MASTER_WACK; // Go to acknowledge
+        next_sda_enable = 1'b1; // Pull sda low for acknowlege because we want to read one more byte.
       end
-      else
-      begin
-        next_count = count - 8'd1;
-      end
+      else next_count = count - 8'd1;
       next_scl_enable = 1'b1;
     end
 
-    STATE_R_LSB:
+    STATE_R_LSBYTE:
     begin
-      if(count == 0)
-      begin
-        next_state = STATE_MASTER_WACK;
-        next_sda_enable = 1'b1;
-      end
-      else
-      begin
-        next_count = count - 8'd1;
-      end
+      if(count == 0) next_state = STATE_MASTER_WACK; // Go to acknowledge and don't pull sda low because we're done reading bytes.
+      else next_count = count - 8'd1;
       next_scl_enable = 1'b1;
     end
 
