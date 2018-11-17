@@ -13,96 +13,92 @@ output wire [15:0] read_data, /* This is set to the data retrieved from the slav
 output wire ready
 );
 
-localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSB = 8'd7, STATE_R_MSB = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
-reg [15:0] latched_data;
-reg [7:0] state, next_state, count, next_count;
-reg [6:0] latched_addr;
-reg latched_two_bytes;
-reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
-reg initialized;
-// OUTPUT COMBINATIONAL LOGIC
-assign sda = sda_enable ? 1'b0 : 1'bz;
-assign scl = scl_enable && clk ? 1'b0 : 1'bz;
-assign ready = (state == STATE_IDLE) && !(rst);
-assign read_data = latched_rw ? latched_data : 16'bxxxxxxxxxxxxxxxx;
+  localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSB = 8'd7, STATE_R_MSB = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
+  reg [15:0] latched_data;
+  reg [7:0] state, next_state, count, next_count;
+  reg [6:0] latched_addr;
+  reg latched_two_bytes;
+  reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
+  reg initialized;
+  // OUTPUT COMBINATIONAL LOGIC
+  assign sda = sda_enable ? 1'b0 : 1'bz;
+  assign scl = scl_enable && clk ? 1'b0 : 1'bz;
+  assign ready = (state == STATE_IDLE) && !(rst);
+  assign read_data = latched_rw ? latched_data : 16'bxxxxxxxxxxxxxxxx;
 
-// UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
-begin
-  if(rst) // TODO: verify
+  // UPDATE STATE SEQUENTIAL LOGIC
+  always@(posedge clk)
   begin
-    initialized <= 1'd0;
-  end
-  else if (initialized)
-  begin
-  
-    if(state == STATE_IDLE)
+    if(rst) // TODO: verify
     begin
+      initialized <= 1'd0;
+    end
+    else if (initialized)
+    begin
+      if(state == STATE_IDLE)
+      begin
         latched_addr <= addr;
-	latched_data <= data;
-	latched_rw <= rw;
-	latched_two_bytes <= two_bytes;
+        latched_data <= data;
+        latched_rw <= rw;
+        latched_two_bytes <= two_bytes;
+      end
+      else if(state == STATE_RDATA)
+      begin
+        latched_data[count] = (sda === 1'bz);
+      end
+      state <= next_state;
+      count <= next_count;
+      sda_enable <= next_sda_enable;
+      scl_enable <= next_scl_enable;
     end
-    else if(state == STATE_RDATA)
+    else // initialize
     begin
-      latched_data[count] = (sda === 1'bz);
+      state <= STATE_IDLE;
+      count <= 8'd0;
+      sda_enable <= 1'd0;
+      scl_enable <= 1'd0;
+      latched_addr <= 7'd0;
+      latched_data <= 8'd0;
+      latched_rw <= 1'd0;
+      latched_two_bytes <= 1'd0;
+      initialized <= 1'd1;
     end
-
-    state <= next_state;
-    count <= next_count;
-    sda_enable <= next_sda_enable;
-    scl_enable <= next_scl_enable;
   end
-  else // initialize
+
+  // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
+  always@(sda or scl or state or start or count or latched_rw or latched_data or latched_addr or latched_two_bytes)
   begin
-    state <= STATE_IDLE;
-    count <= 8'd0;
-    sda_enable <= 1'd0;
-    scl_enable <= 1'd0;
-    latched_addr <= 7'd0;
-    latched_data <= 8'd0;
-    latched_rw <= 1'd0;
-    latched_two_bytes <= 1'd0;
-    initialized <= 1'd1;
-  end
-end
-
-// NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
-always@(sda or scl or state or start or count or latched_rw or latched_data or latched_addr or latched_two_bytes)
-begin
     next_sda_enable = 1'b0;
     next_scl_enable = 1'b0;
     next_count = 1'b0;
     case(state)
     STATE_IDLE:
     begin
-	if(start)
-	begin
-	  next_state = STATE_START;
-	  next_sda_enable = 1'b1;
-	end
-        else next_state = STATE_IDLE;
+      if(start)
+      begin
+        next_state = STATE_START;
+        next_sda_enable = 1'b1;
+      end
+      else next_state = STATE_IDLE;
     end
-
     STATE_START:
     begin
-        next_state = STATE_ADDR;
-        next_count = 8'd6;
-	next_sda_enable = ~latched_addr[next_count];
-      	next_scl_enable = 1'b1;
+      next_state = STATE_ADDR;
+      next_count = 8'd6;
+      next_sda_enable = ~latched_addr[next_count];
+      next_scl_enable = 1'b1;
     end
-
     STATE_ADDR:
     begin
       if(count == 0)
-      begin 
-	next_state = STATE_RW;
-	next_sda_enable = ~latched_rw;
-      end
-      else 
       begin
-	next_state = STATE_ADDR;
-	next_count = count - 8'd1;
+        next_state = STATE_RW;
+        next_sda_enable = ~latched_rw;
+      end
+      else
+      begin
+        next_state = STATE_ADDR;
+        next_count = count - 8'd1;
         next_sda_enable = ~latched_addr[next_count]; // has to be after count - 1
       end
       next_scl_enable = 1'b1;
@@ -116,60 +112,60 @@ begin
 
     STATE_SLAVE_WACK: // slave pulls sda low for ack.
     begin
-      if(sda === 1'bz) // ~ACK	
-      begin 
-      	next_state = STATE_STOP;
+      if(sda === 1'bz) // ~ACK
+      begin
+        next_state = STATE_STOP;
         next_sda_enable = 1'b1;
-      end 
+      end
       else // ACK
       begin
-      	next_scl_enable = 1'b1;
-	if(latched_rw) // reading (1 = reading)
+        next_scl_enable = 1'b1;
+        if(latched_rw) // reading (1 = reading)
         begin
-	  if(latched_two_bytes)
+          if(latched_two_bytes)
           begin
             next_state = STATE_R_MSBYTE;
-	    next_count = 8'd15;
-	  end
-	  else
-   	  begin
+            next_count = 8'd15;
+          end
+          else
+          begin
             next_state = STATE_R_LSBYTE;
-	    next_count = 8'd7;
-	  end
+            next_count = 8'd7;
+          end
         end
         else // writing (0 = writing)
         begin
-	  if(latched_two_bytes)
+          if(latched_two_bytes)
           begin
             next_state = STATE_W_MSBYTE;
-	    next_count = 8'd15;
+            next_count = 8'd15;
             next_sda_enable = ~latched_data[next_count];
-	  end
-	  else
-   	  begin
+          end
+          else
+          begin
             next_state = STATE_W_LSBYTE;
-	    next_count = 8'd7;
-	    next_sda_enable = ~latched_data[next_count];
-	  end
+            next_count = 8'd7;
+            next_sda_enable = ~latched_data[next_count];
+          end
         end
       end
     end
 
     STATE_MASTER_WACK:
     begin
-	next_state = STATE_RDATA;
-	next_scl_enable = 1'b1;
+      next_state = STATE_RDATA;
+      next_scl_enable = 1'b1;
     end
 
     STATE_W_MSBYTE:
     begin
       if(count == 8)
-      begin 
-	next_state = STATE_SLAVE_WACK;
-      end
-      else 
       begin
-	next_count = count - 8'd1;
+        next_state = STATE_SLAVE_WACK;
+      end
+      else
+      begin
+        next_count = count - 8'd1;
         next_sda_enable = ~latched_data[next_count];
       end
       next_scl_enable = 1'b1;
@@ -178,12 +174,12 @@ begin
     STATE_W_LSBYTE:
     begin
       if(count == 0)
-      begin 
-	next_state = STATE_SLAVE_WACK;
-      end
-      else 
       begin
-	next_count = count - 8'd1;
+        next_state = STATE_SLAVE_WACK;
+      end
+      else
+      begin
+        next_count = count - 8'd1;
         next_sda_enable = ~latched_data[next_count];
       end
       next_scl_enable = 1'b1;
@@ -192,13 +188,13 @@ begin
     STATE_R_MSB:
     begin
       if(count == 8)
-      begin 
-	next_state = STATE_MASTER_WACK;
-	next_sda_enable = 1'b1;
-      end
-      else 
       begin
-	next_count = count - 8'd1;
+        next_state = STATE_MASTER_WACK;
+        next_sda_enable = 1'b1;
+      end
+      else
+      begin
+        next_count = count - 8'd1;
       end
       next_scl_enable = 1'b1;
     end
@@ -206,13 +202,13 @@ begin
     STATE_R_LSB:
     begin
       if(count == 0)
-      begin 
-	next_state = STATE_MASTER_WACK;
-	next_sda_enable = 1'b1;
-      end
-      else 
       begin
-	next_count = count - 8'd1;
+        next_state = STATE_MASTER_WACK;
+        next_sda_enable = 1'b1;
+      end
+      else
+      begin
+        next_count = count - 8'd1;
       end
       next_scl_enable = 1'b1;
     end
@@ -224,11 +220,11 @@ begin
 
     default:
     begin
-       next_state = STATE_IDLE;
+      next_state = STATE_IDLE;
     end
 
     endcase
 
-end
+  end
 
 endmodule
