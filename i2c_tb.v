@@ -39,9 +39,9 @@ module i2c_tb;
 
   always #2.5 clk = ~clk;
   assign pull_sda_low =   (
-                          (test == TEST2 || test == TEST4 || test == TEST6 || test == TEST8) && 
-                          (uut.state == 4 || uut.state == 7 || uut.state == 8) && 
-                          (bytes_written < 1 || ((uut.state == 7 || uut.state == 8) && transmit_data[uut.count])));
+                          ((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
+                          ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count])
+                          );
   
   assign sda = pull_sda_low ? 1'b0 : 1'bz;
 
@@ -58,36 +58,41 @@ module i2c_tb;
     // INITIALIZE INPUTS
     addr  = 7'h50 ;
     data = 0;
-    transmit_data = 0;
     clk = 0;
     rst = 0;
     rw = 0;
     test = 0;
-    bytes_written = 0;
     start = 0;
     two_bytes = 0;
+    transmit_data = 0;
+    bytes_written = 0;
 
     // WAIT 10ns FOR GLOBAL RESET TO FINISH
     #10;
     // ADD STIMULUS HERE
     test = TEST1; // Test for one byte write without slave acknowledge
     rw = 0;
+    two_bytes = 0;
     data  = 16'haa55;
+    transmit_data = 16'h0000; 
     start = 1; #5;
     start = 0; #5;
 
     #75;
 
-    test = TEST2; // Test for one byte write with slave acknowledge
+    test = TEST2; // Test for two byte write without slave acknowledge
     rw = 0;
+    two_bytes = 1;
     data  = 16'haa55;
+    transmit_data = 16'h0000; 
     start = 1; #5;
     start = 0; #5;
 
-    #100;
+    #75;
 
     test = TEST3; // Test for one byte read without slave acknowledge
     rw = 1;
+    two_bytes = 0;
     transmit_data = 16'ha0a0;
     data  = 16'h0000;
     start = 1; #5;
@@ -95,51 +100,55 @@ module i2c_tb;
 
     #75;
 
-    test = TEST4; // Test for one byte read without slave acknowledge
+    test = TEST4; // Test for two byte read without slave acknowledge
     rw = 1;
-    transmit_data = 16'ha0a0; 
-    start = 1; #5;
-    start = 0; #5;
-
-    #100;
-
-    test = TEST5; // Test for two byte write without slave acknowledge
-    rw = 0;
-    data  = 16'haa55;
     two_bytes = 1;
+    data  = 16'h0000;
+    transmit_data = 16'ha0a0;
     start = 1; #5;
     start = 0; #5;
 
     #75;
 
+    test = TEST5; // Test for one byte write with slave acknowledge
+    rw = 0;
+    two_bytes = 0;
+    data  = 16'haa55;
+    transmit_data = 16'h0000; 
+    start = 1; #5;
+    start = 0; #5;
+
+    #100;
+
     test = TEST6; // Test for two byte write with slave acknowledge
     rw = 0;
-    data  = 16'haa55;
     two_bytes = 1;
+    data  = 16'haa55;
+    transmit_data = 16'h0000;
     start = 1; #5;
     start = 0; #5;
 
     #200;
 
-    test = TEST7; // Test for two byte read without slave acknowledge
+    test = TEST7; // Test for one byte read with slave acknowledge
     rw = 1;
+    two_bytes = 0;
     data  = 16'h0000;
-    transmit_data = 16'ha0a0;
-    two_bytes = 1;
-    start = 1; #5;
-    start = 0; #5;
-
-    #75;
-
-    test = TEST8; // Test for two byte read with slave acknowledge
-    rw = 1;
-    data  = 16'h0000;
-    transmit_data = 16'ha0a0; 
-    two_bytes = 1;
+    transmit_data = 16'ha7b8; 
     start = 1; #5;
     start = 0; #5;
 
     #100;
+
+    test = TEST8; // Test for two byte read with slave acknowledge
+    rw = 1;
+    two_bytes = 1;
+    data  = 16'h0000;
+    transmit_data = 16'ha7b8; 
+    start = 1; #5;
+    start = 0; #5;
+
+    #200;
   end
 
 endmodule
