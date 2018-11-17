@@ -1,25 +1,25 @@
 
 module i2c (
-input wire clk,
-input wire rst,
-input wire start,
-input wire [6:0] addr, /* Set this to the address of the slave. */
-input wire [15:0] data, /* Set this to the data we want to send to the slave */
-input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
-input wire rw, /* 0 = write, 1 = read */
-inout wire sda,
-inout wire scl,
-output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
-output wire ready
-);
+  input wire clk,
+  input wire rst,
+  input wire start,
+  input wire [6:0] addr, /* Set this to the address of the slave. */
+  input wire [15:0] data, /* Set this to the data we want to send to the slave */
+  input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
+  input wire rw, /* 0 = write, 1 = read */
+  inout wire sda,
+  inout wire scl,
+  output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
+  output wire ready
+  );
 
-  localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSB = 8'd7, STATE_R_MSB = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
-  reg [15:0] latched_data;
-  reg [7:0] state, next_state, count, next_count;
-  reg [6:0] latched_addr;
-  reg latched_two_bytes;
-  reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
-  reg initialized;
+localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSB = 8'd7, STATE_R_MSB = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
+reg [15:0] latched_data;
+reg [7:0] state, next_state, count, next_count;
+reg [6:0] latched_addr;
+reg latched_two_bytes;
+reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
+reg initialized;
   // OUTPUT COMBINATIONAL LOGIC
   assign sda = sda_enable ? 1'b0 : 1'bz;
   assign scl = scl_enable && clk ? 1'b0 : 1'bz;
@@ -35,21 +35,32 @@ output wire ready
     end
     else if (initialized)
     begin
-      if(state == STATE_IDLE)
-      begin
-        latched_addr <= addr;
-        latched_data <= data;
-        latched_rw <= rw;
-        latched_two_bytes <= two_bytes;
-      end
-      else if(state == STATE_RDATA)
-      begin
-        latched_data[count] = (sda === 1'bz);
-      end
       state <= next_state;
       count <= next_count;
       sda_enable <= next_sda_enable;
       scl_enable <= next_scl_enable;
+      case(state)
+        STATE_IDLE:
+        begin
+          latched_addr <= addr;
+          latched_data <= data;
+          latched_rw <= rw;
+          latched_two_bytes <= two_bytes;
+        end
+        STATE_W_MSBYTE, STATE_W_LSBYTE:
+        begin
+          latched_two_bytes <= 1'b0;
+        end
+        STATE_R_MSBYTE, STATE_R_LSBYTE:
+        begin
+          latched_two_bytes <= 1'b0;
+          latched_data[count] = (sda === 1'bz) || (sda == 1'b1);
+        end
+        default:
+        begin
+          // Do nothing.
+        end
+      endcase
     end
     else // initialize
     begin
@@ -72,33 +83,33 @@ output wire ready
     next_scl_enable = 1'b0;
     next_count = 1'b0;
     case(state)
-    STATE_IDLE:
-    begin
-      if(start)
+      STATE_IDLE:
       begin
-        next_state = STATE_START;
-        next_sda_enable = 1'b1;
+        if(start)
+        begin
+          next_state = STATE_START;
+          next_sda_enable = 1'b1;
+        end
+        else next_state = STATE_IDLE;
       end
-      else next_state = STATE_IDLE;
-    end
-    STATE_START:
-    begin
-      next_state = STATE_ADDR;
-      next_count = 8'd6;
-      next_sda_enable = ~latched_addr[next_count];
-      next_scl_enable = 1'b1;
-    end
-    STATE_ADDR:
-    begin
-      if(count == 0)
-      begin
-        next_state = STATE_RW;
-        next_sda_enable = ~latched_rw;
-      end
-      else
+      STATE_START:
       begin
         next_state = STATE_ADDR;
-        next_count = count - 8'd1;
+        next_count = 8'd6;
+        next_sda_enable = ~latched_addr[next_count];
+        next_scl_enable = 1'b1;
+      end
+      STATE_ADDR:
+      begin
+        if(count == 0)
+        begin
+          next_state = STATE_RW;
+          next_sda_enable = ~latched_rw;
+        end
+        else
+        begin
+          next_state = STATE_ADDR;
+          next_count = count - 8'd1;
         next_sda_enable = ~latched_addr[next_count]; // has to be after count - 1
       end
       next_scl_enable = 1'b1;
@@ -223,8 +234,8 @@ output wire ready
       next_state = STATE_IDLE;
     end
 
-    endcase
+  endcase
 
-  end
+end
 
 endmodule
