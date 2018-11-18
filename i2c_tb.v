@@ -2,7 +2,7 @@
 
 module i2c_tb;
 
-  localparam [3:0] TEST1 = 4'd1, TEST2 = 4'd2, TEST3 = 4'd3, TEST4 = 4'd4, TEST5 = 4'd5, TEST6 = 4'd6, TEST7 = 4'd7, TEST8 = 4'd8, TEST9 = 4'd9;
+  localparam [3:0] TEST1 = 4'd1, TEST2 = 4'd2, TEST3 = 4'd3, TEST4 = 4'd4, TEST5 = 4'd5, TEST6 = 4'd6, TEST7 = 4'd7, TEST8 = 4'd8, TEST9 = 4'd9, TEST10 = 4'd10, TEST11 = 4'd11;
   reg [3:0] test, bytes_written;
   reg [15:0] transmit_data;
   wire pull_sda_low;
@@ -40,10 +40,12 @@ module i2c_tb;
   always #2.5 clk = ~clk;
   assign pull_sda_low =   (
                          ((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
-                          ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count])
+                          ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count]) ||
+                          test == TEST9 || test == TEST11
                           );
   
   assign sda = pull_sda_low ? 1'b0 : 1'bz;
+  assign scl = test == TEST10 || test == TEST11 ? 1'b0 : 1'bz;
 
   always@(posedge uut.state)
   begin
@@ -149,6 +151,22 @@ module i2c_tb;
     start = 0; #5;
 
     #200;
+
+    test = TEST9; // Testing ready line to ensure we don't say i2c is ready when another device is using it.
+    #25;
+    test = 0;
+    #25;
+
+    test = TEST10; // Testing ready line to ensure we don't say i2c is ready when another device is using it.
+    #25;
+    test = 0;
+    #25;
+    
+    test = TEST11;
+    #25;
+    test = 0;
+    #25;
+
   end
 
 endmodule

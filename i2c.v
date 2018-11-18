@@ -23,7 +23,7 @@ reg initialized;
   // OUTPUT COMBINATIONAL LOGIC
   assign sda = sda_enable ? 1'b0 : 1'bz;
   assign scl = scl_enable && clk ? 1'b0 : 1'bz;
-  assign ready = (state == STATE_IDLE) && !(rst);
+  assign ready = (state == STATE_IDLE) && !(rst) && (sda === 1'bz || sda == 1'b1) && (scl === 1'bz || scl == 1'b1);
   assign read_data = latched_rw ? latched_data : 16'bxxxxxxxxxxxxxxxx;
 
   // UPDATE STATE SEQUENTIAL LOGIC
