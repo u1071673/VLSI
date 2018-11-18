@@ -1,17 +1,17 @@
 
 module i2c (
-  input wire clk,
-  input wire rst,
-  input wire start,
-  input wire [6:0] addr, /* Set this to the address of the slave. */
-  input wire [15:0] data, /* Set this to the data we want to send to the slave. If we are reading this should be 16'd0 */
-  input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
-  input wire rw, /* 0 = write, 1 = read */
-  inout wire sda,
-  inout wire scl,
-  output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
-  output wire ready
-  );
+input wire [15:0] data, /* Set this to the data we want to send to the slave. If we are reading this should be 16'd0 */
+input wire [6:0] addr, /* Set this to the address of the slave. */
+input wire clk,
+input wire rst,
+input wire start,
+input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
+input wire rw, /* 0 = write, 1 = read */
+inout wire sda,
+inout wire scl,
+output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
+output wire ready
+);
 
 localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSBYTE = 8'd7, STATE_R_MSBYTE = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
 reg [15:0] latched_data;
@@ -29,10 +29,7 @@ reg initialized;
   // UPDATE STATE SEQUENTIAL LOGIC
   always@(posedge clk)
   begin
-    if(rst) // TODO: verify
-    begin
-      initialized <= 1'd0;
-    end
+    if(rst) initialized <= 1'd0;
     else if (initialized)
     begin
       state <= next_state;
@@ -222,7 +219,7 @@ reg initialized;
     STATE_R_LSBYTE:
     begin
       if(count == 0) next_state = STATE_MASTER_WACK; // Go to acknowledge and don't pull sda low because we're done reading bytes.
-      else next_count = count - 8'd1;
+        else next_count = count - 8'd1;
       next_scl_enable = 1'b1;
     end
 

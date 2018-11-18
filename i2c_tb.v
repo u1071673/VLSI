@@ -39,7 +39,7 @@ module i2c_tb;
 
   always #2.5 clk = ~clk;
   assign pull_sda_low =   (
-                          ((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
+                         ((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
                           ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count])
                           );
   

@@ -1,14 +1,15 @@
 `define TH 8'd10
 
 module solar (
-input wire clk,
-input wire rst,
-input wire [7:0] lsn, lse, lss, lsw,
-output wire mn, me, ms, mw
-);
+	input wire clk,
+	input wire rst,
+	input wire [7:0] lsn, lse, lss, lsw,
+	output wire mn, me, ms, mw
+	);
 
 localparam [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS = 3'd3, STATE_MW = 3'd4;
 reg [2:0] state, next_state;
+reg inizitalized;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign mn = (state == STATE_MN);
@@ -20,8 +21,13 @@ assign mw = (state == STATE_MW);
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-	if(rst) state = STATE_IDLE;
-	else state = next_state;
+	if(rst) initialized 1'd0;
+	else if(initialized) state <= next_state;
+	else 
+	begin
+		state <= STATE_IDLE;
+		initialized <= 1'd1;
+	end
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
@@ -42,7 +48,7 @@ begin
 		STATE_MW: if((lsw + `TH) < lse) next_state = STATE_IDLE;
 		default
 		begin
-			// TODO: Figure out what to do for default case.
+			next_state = STATE_IDLE;
 		end
 	endcase
 
