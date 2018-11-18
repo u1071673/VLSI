@@ -13,7 +13,7 @@ output wire [15:0] read_data, /* This is set to the data retrieved from the slav
 output wire ready
 );
 
-localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSBYTE = 8'd7, STATE_R_MSBYTE = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP = 8'd10;
+localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSBYTE = 8'd7, STATE_R_MSBYTE = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP1 = 8'd10, STATE_STOP2 = 8'd11;
 reg [15:0] latched_data;
 reg [7:0] state, next_state, count, next_count;
 reg [6:0] latched_addr;
@@ -123,14 +123,15 @@ reg initialized;
 
     STATE_SLAVE_WACK: // slave pulls sda low for ack.
     begin
+      next_scl_enable = 1'b1;
       if(sda === 1'bz || sda === 1'b1) // ~ACK
       begin
-        next_state = STATE_STOP;
+        next_state = STATE_STOP1;
         next_sda_enable = 1'b1;
+        next_scl_enable = 1'b1;
       end
       else // ACK
       begin
-        next_scl_enable = 1'b1;
         if(latched_rw) // reading (1 = reading)
         begin
           if(latched_two_bytes)
@@ -159,21 +160,6 @@ reg initialized;
             next_sda_enable = ~latched_data[next_count];
           end
         end
-      end
-    end
-
-    STATE_MASTER_WACK:
-    begin
-      if(latched_two_bytes) // read another byte.
-      begin
-        next_scl_enable = 1'b1;
-        next_state = STATE_R_LSBYTE;
-        next_count = 8'd7;
-      end
-      else 
-      begin
-        next_sda_enable = 1'b1;
-        next_state = STATE_STOP;
       end
     end
 
@@ -219,13 +205,34 @@ reg initialized;
     STATE_R_LSBYTE:
     begin
       if(count == 0) next_state = STATE_MASTER_WACK; // Go to acknowledge and don't pull sda low because we're done reading bytes.
-        else next_count = count - 8'd1;
+      else next_count = count - 8'd1;
       next_scl_enable = 1'b1;
     end
 
-    STATE_STOP:
+    STATE_MASTER_WACK:
     begin
-      next_state = STATE_IDLE;
+      next_scl_enable = 1'b1;
+      if(latched_two_bytes) // read another byte.
+      begin
+        next_state = STATE_R_LSBYTE;
+        next_count = 8'd7;
+      end
+      else 
+      begin
+        next_sda_enable = 1'b1;
+        next_state = STATE_STOP1; 
+      end
+    end
+
+    STATE_STOP1:
+    begin
+      next_sda_enable = 1'b1; // Keep sda low and let scl high so we can do start bit.
+      next_state = STATE_STOP2;
+    end
+
+    STATE_STOP2:
+    begin
+      next_state = STATE_IDLE; // Here, scl is already high, now release sda to signal stop bit and go back to idle.
     end
 
     default:
