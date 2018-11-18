@@ -21,7 +21,7 @@ assign mw = (state == STATE_MW);
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-	if(rst) initialized 1'd0;
+	if(rst) initialized <= 1'd0;
 	else if(initialized) state <= next_state;
 	else 
 	begin
