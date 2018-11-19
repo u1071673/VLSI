@@ -1,5 +1,5 @@
 module solar (
-        input wire th, /* set this to a value between 2 - 200 */
+	input wire [7:0] th, /* set this to a value between 2 - 200 */
 	input wire clk,
 	input wire rst,
 	input wire [7:0] lsn, lse, lss, lsw,
