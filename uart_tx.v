@@ -9,7 +9,7 @@ output wire tx,
 output wire ready
 );
 
-localparam [1:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_DATA = 8'd2;
+localparam [1:0] STATE_IDLE = 2'd0, STATE_START = 2'd1, STATE_DATA = 2'd2;
 reg [7:0] count, next_count, latched_data;
 reg [1:0] state, next_state;
 reg initialized, bit, next_bit;
