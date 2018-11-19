@@ -27,6 +27,7 @@ R1
 R2
 n@_opt1
 R3
+R0
 vcontrol
 !s110 1542593129
 !i10b 1
@@ -49,13 +50,13 @@ r1
 Z8 o-work work -L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
 R2
 vhc
-Z9 !s110 1542593130
+!s110 1542599934
 !i10b 1
-!s100 zJeHH<_?E:SFFQ@;VofPf2
-I2a[4U=>^4n;D<][MZCF[_2
+!s100 <DM[B>c8J4HWmVXQhNFD>0
+IUReJO4A2:a6d_K?9VPUiO1
 R4
 R5
-Z10 w1542590743
+w1542599746
 8/home/jasonj/Documents/ece6710/VLSI/hc.v
 F/home/jasonj/Documents/ece6710/VLSI/hc.v
 L0 3
@@ -63,14 +64,14 @@ R7
 r1
 !s85 0
 31
-Z11 !s108 1542593130.000000
+Z9 !s108 1542599934.000000
 !s107 /home/jasonj/Documents/ece6710/VLSI/hc.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/hc.v|
 !i113 0
 R8
 R2
 vhc_tb
-R9
+Z10 !s110 1542599935
 !i10b 1
 !s100 kQ41d6zVZ=^Q^ZX:Qa6@f1
 ICeEbCN1c[acl2kW>]MmJI1
@@ -84,20 +85,20 @@ R7
 r1
 !s85 0
 31
-R11
+R9
 !s107 /home/jasonj/Documents/ece6710/VLSI/hc_tb.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/hc_tb.v|
 !i113 0
 R8
 R2
 vi2c
-R9
+R10
 !i10b 1
 !s100 `?]6ZP9ASGmVf>b3NeRkP1
 Ifh2[R@_n[>e3Hz?Qz<<LA2
 R4
 R5
-R10
+Z11 w1542590743
 8/home/jasonj/Documents/ece6710/VLSI/i2c.v
 F/home/jasonj/Documents/ece6710/VLSI/i2c.v
 L0 2
@@ -105,20 +106,20 @@ R7
 r1
 !s85 0
 31
-R11
+Z12 !s108 1542599935.000000
 !s107 /home/jasonj/Documents/ece6710/VLSI/i2c.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/i2c.v|
 !i113 0
 R8
 R2
 vi2c_tb
-R9
+R10
 !i10b 1
 !s100 KNDVUeY4FVJh93XYQan2U3
 IkS=KfEfKojcm>26LP8CGg2
 R4
 R5
-R10
+R11
 8/home/jasonj/Documents/ece6710/VLSI/i2c_tb.v
 F/home/jasonj/Documents/ece6710/VLSI/i2c_tb.v
 L0 3
@@ -126,20 +127,20 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/i2c_tb.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/i2c_tb.v|
 !i113 0
 R8
 R2
 vsolar
-R9
+R10
 !i10b 1
-!s100 zAS^1XATUgj<UjIikm2ik3
-IcWiH[NcHhH2kJhdI<`k4K1
+!s100 C_c67DPYmj]=R5V;[JDPB0
+I2^Yd5YIf=jZnK^TMnj7j33
 R4
 R5
-R10
+w1542599663
 8/home/jasonj/Documents/ece6710/VLSI/solar.v
 F/home/jasonj/Documents/ece6710/VLSI/solar.v
 L0 3
@@ -147,14 +148,56 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/solar.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/solar.v|
 !i113 0
 R8
 R2
+vtemp_control
+R10
+!i10b 1
+!s100 gUIJ[LAdd01V22damMSfN2
+IUJzOVO`TQ_FK1`YCNdCHR1
+R4
+R5
+w1542599535
+8/home/jasonj/Documents/ece6710/VLSI/temp_control.v
+F/home/jasonj/Documents/ece6710/VLSI/temp_control.v
+L0 7
+R7
+r1
+!s85 0
+31
+R12
+!s107 /home/jasonj/Documents/ece6710/VLSI/temp_control.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/temp_control.v|
+!i113 0
+R8
+R2
+vuart
+R10
+!i10b 1
+!s100 Z5:6[:7BW7W`ACDN[aiTZ2
+I14QZl?Nn=Xl6KDijA:2U>2
+R4
+R5
+w1542599928
+8/home/jasonj/Documents/ece6710/VLSI/uart.v
+F/home/jasonj/Documents/ece6710/VLSI/uart.v
+L0 2
+R7
+r1
+!s85 0
+31
+R12
+!s107 /home/jasonj/Documents/ece6710/VLSI/uart.v|
+!s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/uart.v|
+!i113 0
+R8
+R2
 vuart_rx
-R9
+R10
 !i10b 1
 !s100 WPf8]G^?2:8WH5D44@=Je1
 I;X`LWe:X`5g[7z>^@A0Cj0
@@ -168,14 +211,14 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/uart_rx.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/uart_rx.v|
 !i113 0
 R8
 R2
 vuart_rx_tb
-R9
+R10
 !i10b 1
 !s100 A`R16NRW?^5fkgFmND5?V2
 I4Kj0X`mE;bQWZbzF?zC<;0
@@ -189,14 +232,14 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/uart_rx_tb.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/uart_rx_tb.v|
 !i113 0
 R8
 R2
 vuart_tx
-R9
+R10
 !i10b 1
 !s100 EOkDgZZaSb:FcdMhbD2]g3
 IKckT0aaoINOT[aLElGCQ?2
@@ -210,14 +253,14 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/uart_tx.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/uart_tx.v|
 !i113 0
 R8
 R2
 vuart_tx_tb
-R9
+R10
 !i10b 1
 !s100 <ZMN>binJTA_1VV9SK6E=0
 I1IKP5U^XDYim=ZVW4>F[53
@@ -231,7 +274,7 @@ R7
 r1
 !s85 0
 31
-R11
+R12
 !s107 /home/jasonj/Documents/ece6710/VLSI/uart_tx_tb.v|
 !s90 -reportprogress|300|-work|work|-vopt|-stats=none|/home/jasonj/Documents/ece6710/VLSI/uart_tx_tb.v|
 !i113 0

@@ -1,6 +1,7 @@
 `define TH 8'd10
 
 module solar (
+        input wire SOLAR_TH,
 	input wire clk,
 	input wire rst,
 	input wire [7:0] lsn, lse, lss, lsw,
@@ -36,16 +37,16 @@ begin
 	case(state)
 		STATE_IDLE:
 		begin
-			if(lsn > (lss + `TH)) next_state = STATE_MN;
-			else if(lse > (lsw + `TH)) next_state = STATE_ME;
-			else if(lss > (lsn + `TH)) next_state = STATE_MS;
-			else if(lsw > (lse + `TH)) next_state = STATE_MW;
+			if(lsn > (lss + SOLAR_TH)) next_state = STATE_MN;
+			else if(lse > (lsw + SOLAR_TH)) next_state = STATE_ME;
+			else if(lss > (lsn + SOLAR_TH)) next_state = STATE_MS;
+			else if(lsw > (lse + SOLAR_TH)) next_state = STATE_MW;
 			else next_state = STATE_IDLE;
 		end
-		STATE_MN: if((lsn + `TH) < lss) next_state = STATE_IDLE;
-		STATE_ME: if((lse + `TH) < lsw) next_state = STATE_IDLE;
-		STATE_MS: if((lss + `TH) < lsn) next_state = STATE_IDLE;
-		STATE_MW: if((lsw + `TH) < lse) next_state = STATE_IDLE;
+		STATE_MN: if((lsn + SOLAR_TH) < lss) next_state = STATE_IDLE;
+		STATE_ME: if((lse + SOLAR_TH) < lsw) next_state = STATE_IDLE;
+		STATE_MS: if((lss + SOLAR_TH) < lsn) next_state = STATE_IDLE;
+		STATE_MW: if((lsw + SOLAR_TH) < lse) next_state = STATE_IDLE;
 		default
 		begin
 			next_state = STATE_IDLE;
