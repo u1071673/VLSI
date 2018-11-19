@@ -45,9 +45,9 @@ begin
 	case(state)
 		STATE_IDLE:
 		begin
-			if(lsn > lsn_th) next_state = STATE_MN;
+			if(lsn > lss_th) next_state = STATE_MN;
 			else if(lse > lsw_th) next_state = STATE_ME;
-			else if(lss > lss_th) next_state = STATE_MS;
+			else if(lss > lsn_th) next_state = STATE_MS;
 			else if(lsw > lse_th) next_state = STATE_MW;
 			else next_state = STATE_IDLE;
 		end
