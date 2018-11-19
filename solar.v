@@ -1,7 +1,5 @@
-`define TH 8'd10
-
 module solar (
-        input wire SOLAR_TH,
+        input wire th, /* set this to a value between 2 - 200 */
 	input wire clk,
 	input wire rst,
 	input wire [7:0] lsn, lse, lss, lsw,
@@ -11,6 +9,16 @@ module solar (
 localparam [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS = 3'd3, STATE_MW = 3'd4;
 reg [2:0] state, next_state;
 reg initialized;
+
+wire [7:0] lsn_th;
+wire [7:0] lse_th;
+wire [7:0] lss_th;
+wire [7:0] lsw_th;
+
+assign lsn_th = lsn + th;
+assign lse_th = lse + th;
+assign lss_th = lss + th;
+assign lsw_th = lsw + th;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign mn = (state == STATE_MN);
@@ -32,21 +40,21 @@ begin
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
-always@(lsn or lse or lss or lsw or state)
+always@(lsn or lse or lss or lsw or state or lsn_th or lse_th or lss_th or lsw_th)
 begin
 	case(state)
 		STATE_IDLE:
 		begin
-			if(lsn > (lss + SOLAR_TH)) next_state = STATE_MN;
-			else if(lse > (lsw + SOLAR_TH)) next_state = STATE_ME;
-			else if(lss > (lsn + SOLAR_TH)) next_state = STATE_MS;
-			else if(lsw > (lse + SOLAR_TH)) next_state = STATE_MW;
+			if(lsn > lsn_th) next_state = STATE_MN;
+			else if(lse > lsw_th) next_state = STATE_ME;
+			else if(lss > lss_th) next_state = STATE_MS;
+			else if(lsw > lse_th) next_state = STATE_MW;
 			else next_state = STATE_IDLE;
 		end
-		STATE_MN: if((lsn + SOLAR_TH) < lss) next_state = STATE_IDLE;
-		STATE_ME: if((lse + SOLAR_TH) < lsw) next_state = STATE_IDLE;
-		STATE_MS: if((lss + SOLAR_TH) < lsn) next_state = STATE_IDLE;
-		STATE_MW: if((lsw + SOLAR_TH) < lse) next_state = STATE_IDLE;
+		STATE_MN: if(lsn_th < lss) next_state = STATE_IDLE;
+		STATE_ME: if(lse_th < lsw) next_state = STATE_IDLE;
+		STATE_MS: if(lss_th < lsn) next_state = STATE_IDLE;
+		STATE_MW: if(lsw_th < lse) next_state = STATE_IDLE;
 		default
 		begin
 			next_state = STATE_IDLE;

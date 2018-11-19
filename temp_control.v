@@ -12,19 +12,25 @@ output wire out
 
 localparam [1:0] STATE_IDLE = 2'd0, STATE_COOLDOWN = 2'd1, STATE_HEATUP = 2'd2;
 reg [1:0] state, next_state;
+reg initialized;
 wire hot_to_idle_th;
 wire cold_to_idle_th;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign out = (state == STATE_COOLDOWN && geothermal > hot_to_idle_th && (!temp_g_geothermal)) || (state == STATE_HEATUP && geothermal < cold_to_idle_th && temp_g_geothermal);
-assign hot_to_idle_th = cooldown_th - TH;
-assign cold_to_idle_th = heatup_th + TH;
+assign hot_to_idle_th = cooldown_th - `TH;
+assign cold_to_idle_th = heatup_th + `TH;
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-	if(rst) state = STATE_IDLE;
-	else state = next_state;
+	if(rst) initialized <= 1'd0;
+	else if(initialized) state <= next_state;
+	else 
+	begin
+		state <= STATE_IDLE;
+		initialized <= 1'd1;
+	end
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
