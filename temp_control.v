@@ -3,10 +3,10 @@
 module temp_control (
 input wire [7:0] cooldown_th, /* set only to value between 90-120 */
 input wire [7:0] heatup_th, /* set only to value between 10-80 */
-input wire [7:0] geothermal,
+input wire [7:0] greenhouse_temp,
 input wire clk,
 input wire rst,
-input wire temp_g_geothermal,
+input wire temp_g_greenhouse_temp,
 output wire out
 );
 
@@ -17,7 +17,7 @@ wire hot_to_idle_th;
 wire cold_to_idle_th;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign out = (state == STATE_COOLDOWN && geothermal > hot_to_idle_th && (!temp_g_geothermal)) || (state == STATE_HEATUP && geothermal < cold_to_idle_th && temp_g_geothermal);
+assign out = (state == STATE_COOLDOWN && greenhouse_temp > hot_to_idle_th && (!temp_g_greenhouse_temp)) || (state == STATE_HEATUP && greenhouse_temp < cold_to_idle_th && temp_g_greenhouse_temp);
 assign hot_to_idle_th = cooldown_th - `TH;
 assign cold_to_idle_th = heatup_th + `TH;
 
@@ -34,17 +34,17 @@ begin
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
-always@(geothermal or state or cooldown_th or heatup_th or hot_to_idle_th or cold_to_idle_th)
+always@(greenhouse_temp or state or cooldown_th or heatup_th or hot_to_idle_th or cold_to_idle_th)
 begin
 	case(state)
 		STATE_IDLE:
 		begin
-			if(geothermal >= cooldown_th) next_state = STATE_COOLDOWN;
-			else if (geothermal <= heatup_th) next_state = STATE_HEATUP;
+			if(greenhouse_temp >= cooldown_th) next_state = STATE_COOLDOWN;
+			else if (greenhouse_temp <= heatup_th) next_state = STATE_HEATUP;
 			else next_state = STATE_IDLE;
 		end
-		STATE_COOLDOWN: if(geothermal <= hot_to_idle_th) next_state = STATE_IDLE;
-		STATE_HEATUP: if(geothermal >= cold_to_idle_th) next_state = STATE_IDLE;
+		STATE_COOLDOWN: if(greenhouse_temp <= hot_to_idle_th) next_state = STATE_IDLE;
+		STATE_HEATUP: if(greenhouse_temp >= cold_to_idle_th) next_state = STATE_IDLE;
 		default:
 		begin
 			// TODO: Figure out what to do for default case.
