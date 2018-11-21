@@ -69,9 +69,9 @@ reg next_rw;
 reg next_two_bytes;
 
 reg [15:0] write_data;
-reg [15:0] latched_n_lux; 
-reg [15:0] latched_e_lux; 
-reg [15:0] latched_s_lux; 
+reg [15:0] latched_n_lux;
+reg [15:0] latched_e_lux;
+reg [15:0] latched_s_lux;
 reg [15:0] latched_w_lux;
 reg [8:0] latched_solar_celcius; 
 reg [8:0] latched_greenhouse_celcius; 
@@ -108,6 +108,14 @@ assign calulated_n_lux = n_lsb_size * {4'd0, n_fractional};
 assign calulated_e_lux = e_lsb_size * {4'd0, e_fractional};
 assign calulated_s_lux = s_lsb_size * {4'd0, s_fractional};
 assign calulated_w_lux = w_lsb_size * {4'd0, w_fractional};
+assign solar_celcius = latched_solar_celcius;
+assign greenhouse_celcius = latched_greenhouse_celcius;
+assign ambient_celcius = latched_ambient_celcius;
+assign geothermal_celcius = latched_geothermal_celcius;
+assign n_lux = latched_n_lux;
+assign e_lux = latched_e_lux;
+assign s_lux = latched_s_lux;
+assign w_lux = latched_w_lux;
 
 i2c solar_ts (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
