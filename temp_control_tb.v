@@ -13,8 +13,8 @@ module control_tb;
 control wgs(
 .clk(clk),
 .rst(rst),
-.gt(gt),
-.t_g_gt(t_g_gt),
+.greenhouse_temp(gt),
+.temp_g_greenhouse_temp(t_g_gt),
 .out(out)
 );
 

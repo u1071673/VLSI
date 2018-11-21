@@ -8,21 +8,20 @@
 `define WEST_ADDR 7'b1000111
 
 module i2c_control (
-	input clk,
-	input rst,
-	output [7:0] solar_celcius,
-	output [7:0] greenhouse_celcius,
-	output [7:0] ambient_celcius,
-	output [7:0] geothermal_celcius,
-	output [7:0] n_lux,
-	output [7:0] e_lux,
-	output [7:0] s_lux,
-	output [7:0] w_lux
+	input wire clk,
+	input wire rst,
+	output wire [7:0] solar_celcius,
+	output wire [7:0] greenhouse_celcius,
+	output wire [7:0] ambient_celcius,
+	output wire [7:0] geothermal_celcius,
+	output wire [7:0] n_lux,
+	output wire [7:0] e_lux,
+	output wire [7:0] s_lux,
+	output wire [7:0] w_lux
 	);
 
-reg [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2, STATE_AMBIENT = 8'd3, STATE_GEOTHERMAL = 8'd4, STATE_NORTH = 8'd5, STATE_EAST = 8'd6, STATE_SOUTH = 8'd7, STATE_WEST = 8'd7; 
+localparam [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2, STATE_AMBIENT = 8'd3, STATE_GEOTHERMAL = 8'd4, STATE_NORTH = 8'd5, STATE_EAST = 8'd6, STATE_SOUTH = 8'd7, STATE_WEST = 8'd7; 
 
-wire [7:0] next_state;
 wire [7:0] next_state;
 wire [7:0] next_write_data;
 wire [6:0] next_slave_addr;
@@ -42,6 +41,10 @@ wire next_initialized_north;
 wire next_initialized_east;
 wire next_initialized_south;
 wire next_initialized_west;
+wire next_rw;
+wire next_two_bytes;
+
+
 wire ready;
 wire sda;
 wire scl;
@@ -54,8 +57,6 @@ reg [7:0] latched_n_lux;
 reg [7:0] latched_e_lux; 
 reg [7:0] latched_s_lux; 
 reg [7:0] latched_w_lux; 
-
-// SOLAR REGS
 reg [7:0] state;
 reg [7:0] write_data;
 reg [7:0] read_data;
@@ -67,15 +68,16 @@ reg initialized;
 reg initialized_solar;
 reg initialized_greenhouse;
 reg initialized_ambient;
-reg initialized_geothermal
+reg initialized_geothermal;
 reg initialized_north;
 reg initialized_east;
 reg initialized_south;
 reg initialized_west;
 
+
 i2c solar_ts (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_solar),
@@ -87,8 +89,8 @@ i2c solar_ts (
 	.ready(ready)
 	);
 i2c greenhouse_ts (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_greenhouse),
@@ -100,8 +102,8 @@ i2c greenhouse_ts (
 	.ready(ready)
 	);
 i2c ambient_ts (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_ambient),
@@ -113,8 +115,8 @@ i2c ambient_ts (
 	.ready(ready)
 	);
 i2c geothermal_ts (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_geothermal),
@@ -126,8 +128,8 @@ i2c geothermal_ts (
 	.ready(ready)
 	);
 i2c north_ts (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.wata(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_north),
@@ -139,7 +141,7 @@ i2c north_ts (
 	.ready(ready)
 	);
 i2c east_ls (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
 	.slave_addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
@@ -152,8 +154,8 @@ i2c east_ls (
 	.ready(ready)
 	);
 i2c south_ls (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_south),
@@ -165,8 +167,8 @@ i2c south_ls (
 	.ready(ready)
 	);
 i2c west_ls (
-	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
-	.slave_addr(slave_addr), /* Set this to the address of the slave. */
+	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
+	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
 	.start(start_west),
@@ -272,7 +274,7 @@ begin
 	next_slave_addr = 7'd0;
 	next_rw = 1'd0;
 	next_two_bytes = 1'd0;
-	next_data = 8'd0; // We never write
+	next_write_data = 8'd0; // We never write
 
 	switch(state)
 	STATE_IDLE:
@@ -420,6 +422,6 @@ begin
 		end 
 	end
 
-endcase
+	endcase
 end
 endmodule
