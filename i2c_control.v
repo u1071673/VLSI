@@ -413,7 +413,6 @@ begin
 			next_slave_addr = `WEST_ADDR;
 		end 
 	end
-
 	endcase
 end
 endmodule 
