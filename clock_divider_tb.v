@@ -12,7 +12,7 @@ module clock_divider_tb;
             begin
                #5 reset=1'b1;
                #10 reset=1'b0;
-               #500 $finish;
+               #500;
             end
  
         initial
