@@ -55,7 +55,7 @@ reg initialized;
 assign exponent = read_data[15:12];
 assign fractional = read_data[11:0];
 assign lsb_size = (16'd1 << {12'd0, exponent}) / 16'd100;
-assign calulated_n_lux = lsb_size * {4'd0, fractional};
+assign calulated_lux = lsb_size * {4'd0, fractional};
 
 assign solar_celcius = latched_solar_celcius;
 assign greenhouse_celcius = latched_greenhouse_celcius;
@@ -108,19 +108,19 @@ begin
 		end
 		STATE_NORTH:
 		begin
-			if(ready) latched_n_lux <= calulated_n_lux;
+			if(ready) latched_n_lux <= calulated_lux;
 		end
 		STATE_EAST:
 		begin
-			if(ready) latched_e_lux <= calulated_e_lux;
+			if(ready) latched_e_lux <= calulated_lux;
 		end
 		STATE_SOUTH:
 		begin
-			if(ready) latched_s_lux <= calulated_s_lux;
+			if(ready) latched_s_lux <= calulated_lux;
 		end
 		STATE_WEST:
 		begin
-			if(ready) latched_w_lux <= calulated_w_lux;
+			if(ready) latched_w_lux <= calulated_lux;
 		end
 		endcase
 	end
