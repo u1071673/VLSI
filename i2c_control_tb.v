@@ -47,7 +47,9 @@ module i2c_control_tb;
     if(uut.i2c_module.state == 6 || uut.i2c_module.state == 8)
     begin
       ack_count = ack_count + 1;
+    
     end
+    if(uut.i2c_module.state ==0) ack_count = 0;
   end
   initial begin
     // INITIALIZE INPUTS

@@ -19,8 +19,10 @@ add wave -noupdate /i2c_control_tb/uut/i2c_module/ready
 add wave -noupdate -radix decimal /i2c_control_tb/uut/i2c_module/state
 add wave -noupdate /i2c_control_tb/uut/start
 add wave -noupdate /i2c_control_tb/uut/rw
+add wave -noupdate /i2c_control_tb/uut/slave_acknowledged
+add wave -noupdate /i2c_control_tb/ack_count
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {8859 ps} 0}
+WaveRestoreCursors {{Cursor 1} {1290258 ps} 0}
 quietly wave cursor active 1
 configure wave -namecolwidth 322
 configure wave -valuecolwidth 100
@@ -36,4 +38,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ps
 update
-WaveRestoreZoom {0 ps} {122974 ps}
+WaveRestoreZoom {1226615 ps} {1472563 ps}
