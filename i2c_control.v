@@ -22,19 +22,6 @@ module i2c_control (
 
 localparam [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2, STATE_AMBIENT = 8'd3, STATE_GEOTHERMAL = 8'd4, STATE_NORTH = 8'd5, STATE_EAST = 8'd6, STATE_SOUTH = 8'd7, STATE_WEST = 8'd7; 
 
-wire [7:0] next_state;
-wire [7:0] next_write_data;
-wire [6:0] next_slave_addr;
-wire next_solar_start;
-wire next_greenhouse_start;
-wire next_ambient_start;
-wire next_geothermal_start;
-wire next_north_start;
-wire next_east_start;
-wire next_south_start;
-wire next_west_start;
-wire next_rw;
-wire next_two_bytes;
 wire solar_read_data;
 wire greenhouse_read_data;
 wire ambient_read_data;
@@ -54,6 +41,20 @@ wire west_ready;
 wire ready;
 wire sda;
 wire scl;
+
+reg [7:0] next_state;
+reg [7:0] next_write_data;
+reg [6:0] next_slave_addr;
+reg next_solar_start;
+reg next_greenhouse_start;
+reg next_ambient_start;
+reg next_geothermal_start;
+reg next_north_start;
+reg next_east_start;
+reg next_south_start;
+reg next_west_start;
+reg next_rw;
+reg next_two_bytes;
 
 reg [7:0] latched_solar_celcius; 
 reg [7:0] latched_greenhouse_celcius; 
