@@ -8,7 +8,7 @@ input wire rx,
 input wire start_tx,
 output wire [7:0] data_rx,
 output wire tx,
-output wire ready_tx,
+output wire th,
 output wire ready_rx
 );
 
