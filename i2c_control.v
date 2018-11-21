@@ -20,7 +20,7 @@ module i2c_control (
 	output wire [15:0] w_lux
 	);
 
-localparam [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2, STATE_AMBIENT = 8'd3, STATE_GEOTHERMAL = 8'd4, STATE_NORTH = 8'd5, STATE_EAST = 8'd6, STATE_SOUTH = 8'd7, STATE_WEST = 8'd7; 
+localparam [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2, STATE_AMBIENT = 8'd3, STATE_GEOTHERMAL = 8'd4, STATE_NORTH = 8'd5, STATE_EAST = 8'd6, STATE_SOUTH = 8'd7, STATE_WEST = 8'd7, STATE_IDLE_BUFFER = 8'd8; 
 
 wire [15:0] read_data;
 wire [15:0] lsb_size;
@@ -28,6 +28,7 @@ wire [11:0] fractional;
 wire [3:0] exponent;
 wire sda;
 wire scl;
+wire slave_acknowledged;
 
 reg [15:0] next_write_data;
 reg [7:0] next_state;
@@ -77,7 +78,8 @@ i2c i2c_module(
 	.sda(sda),
 	.scl(scl),
 	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.ready(ready),
+        .got_acknowledge(slave_acknowledged)
 );
 
 
@@ -89,38 +91,42 @@ begin
 	begin
 		state <= next_state;
 		start <= next_start;
+                slave_addr <= next_slave_addr;
+	        rw <= next_rw;
+                two_bytes <= next_two_bytes;
+	        write_data <= next_write_data;
 		case(state)
 		STATE_SOLAR:
 		begin
-			if(ready) latched_solar_celcius <= read_data[15:7];
+			if(ready && slave_acknowledged) latched_solar_celcius <= read_data[15:7];
 		end
 		STATE_GREENHOUSE:
 		begin
-			if(ready) latched_greenhouse_celcius <= read_data[15:7];
+			if(ready && slave_acknowledged) latched_greenhouse_celcius <= read_data[15:7];
 		end
 		STATE_AMBIENT:
 		begin
-			if(ready) latched_ambient_celcius <= read_data[15:7];
+			if(ready && slave_acknowledged) latched_ambient_celcius <= read_data[15:7];
 		end
 		STATE_GEOTHERMAL:
 		begin
-			if(ready) latched_geothermal_celcius <= read_data[15:7];
+			if(ready && slave_acknowledged) latched_geothermal_celcius <= read_data[15:7];
 		end
 		STATE_NORTH:
 		begin
-			if(ready) latched_n_lux <= calulated_lux;
+			if(ready && slave_acknowledged) latched_n_lux <= calulated_lux;
 		end
 		STATE_EAST:
 		begin
-			if(ready) latched_e_lux <= calulated_lux;
+			if(ready && slave_acknowledged) latched_e_lux <= calulated_lux;
 		end
 		STATE_SOUTH:
 		begin
-			if(ready) latched_s_lux <= calulated_lux;
+			if(ready && slave_acknowledged) latched_s_lux <= calulated_lux;
 		end
 		STATE_WEST:
 		begin
-			if(ready) latched_w_lux <= calulated_lux;
+			if(ready && slave_acknowledged) latched_w_lux <= calulated_lux;
 		end
 		endcase
 	end
@@ -130,6 +136,7 @@ begin
 		write_data <= 8'd0;
 		slave_addr <= 8'd0;
 		two_bytes <= 1'd0;
+// TODO: Iniztialized latched_ values with 0's
 		rw <= 1'd0;
 		start <= 1'd0;
 		initialized <= 1'd1;
@@ -143,13 +150,14 @@ begin
 	next_slave_addr = 7'd0;
 	next_rw = 1'd0;
 	next_two_bytes = 1'd0;
-	next_write_data = 8'd0; // We never write
+	next_write_data = 8'd0; // We never write 
+        next_state = STATE_IDLE;
 	case(state)
 	STATE_IDLE:
 	begin
 		if(ready)
 		begin 
-			next_state = STATE_SOLAR;
+			next_state = STATE_IDLE_BUFFER;
 			next_slave_addr = `SOLAR_ADDR;
 			next_start = 1'd1;
 		end
@@ -160,6 +168,12 @@ begin
 		next_rw = 1'd1; // Reading from device
 		next_two_bytes = 1'd1;
 	end
+        STATE_IDLE_BUFFER:
+        begin
+               next_state = STATE_SOLAR;
+	       next_slave_addr = `SOLAR_ADDR;
+	       next_rw = 1'd1; // Reading from device
+        end
 	STATE_SOLAR:
 	begin
 		if(ready) 

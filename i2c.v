@@ -10,7 +10,8 @@ input wire rw, /* 0 = write, 1 = read */
 inout wire sda,
 inout wire scl,
 output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
-output wire ready
+output wire ready,
+output wire got_acknowledge
 );
 
 localparam [7:0] STATE_IDLE = 8'd0, STATE_START = 8'd1, STATE_ADDR = 8'd2, STATE_RW = 8'd3, STATE_SLAVE_WACK = 8'd4, STATE_W_LSBYTE = 8'd5, STATE_W_MSBYTE = 8'd6, STATE_R_LSBYTE = 8'd7, STATE_R_MSBYTE = 8'd8, STATE_MASTER_WACK = 8'd9, STATE_STOP1 = 8'd10, STATE_STOP2 = 8'd11;
@@ -20,6 +21,7 @@ reg [6:0] latched_addr;
 reg latched_two_bytes;
 reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
 reg initialized;
+reg slave_acknowledged;
 
 wire sda_and_scl_high = (sda === 1'bz || sda == 1'b1) && (scl === 1'bz || scl == 1'b1);
   
@@ -28,6 +30,7 @@ assign sda = sda_enable ? 1'b0 : 1'bz;
 assign scl = scl_enable && clk ? 1'b0 : 1'bz;
 assign ready = (state == STATE_IDLE) && !(rst) && sda_and_scl_high;
 assign read_data = latched_rw ? latched_data : 16'bxxxxxxxxxxxxxxxx;
+assign got_acknowledge = slave_acknowledged;
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
@@ -47,12 +50,18 @@ begin
         latched_rw <= rw;
         latched_two_bytes <= two_bytes;
       end
+      STATE_START:
+      begin
+        slave_acknowledged <= 1'b0;
+      end
       STATE_W_MSBYTE, STATE_W_LSBYTE:
       begin
         latched_two_bytes <= 1'b0;
+        slave_acknowledged <= 1'b1;
       end
       STATE_R_MSBYTE, STATE_R_LSBYTE:
       begin
+        slave_acknowledged <= 1'b1;
         latched_data[count] <= (sda === 1'bz) || (sda == 1'b1);
       end
       STATE_MASTER_WACK:
@@ -75,6 +84,7 @@ begin
     latched_data <= 8'd0;
     latched_rw <= 1'd0;
     latched_two_bytes <= 1'd0;
+    slave_acknowledged <= 1'd0;
     initialized <= 1'd1;
   end
 end
