@@ -33,14 +33,6 @@ wire next_start_north;
 wire next_start_east;
 wire next_start_south;
 wire next_start_west;
-wire next_initialized_solar;
-wire next_initialized_greenhouse;
-wire next_initialized_ambient;
-wire next_initialized_geothermal;
-wire next_initialized_north;
-wire next_initialized_east;
-wire next_initialized_south;
-wire next_initialized_west;
 wire next_rw;
 wire next_two_bytes;
 wire solar_read_data;
@@ -78,14 +70,6 @@ reg start;
 reg two_bytes;
 reg rw;
 reg initialized;
-reg initialized_solar;
-reg initialized_greenhouse;
-reg initialized_ambient;
-reg initialized_geothermal;
-reg initialized_north;
-reg initialized_east;
-reg initialized_south;
-reg initialized_west;
 
 assign ready = solar_ready && greenhouse_ready && ambient_ready && geothermal_ready && north_ready && east_ready && south_ready && west_ready;
 
@@ -210,7 +194,7 @@ begin
 		start_south <= next_start_south;
 		start_west <= next_start_west;
 
-		switch(state)
+		case(state)
 		STATE_SOLAR:
 		begin
 			if(ready) latched_solar_celcius <= solar_read_data;
@@ -250,7 +234,6 @@ begin
 		state <= STATE_IDLE;
 		write_data <= 8'd0;
 		slave_addr <= 8'd0;
-		read_data <= 8'd0;
 		start <= 1'd0;
 		two_bytes <= 1'd0;
 		rw <= 1'd0;
@@ -262,20 +245,12 @@ begin
 		start_east <= 1'd0;
 		start_south <= 1'd0;
 		start_west <= 1'd0;
-		initialized_solar <= 1'd0;
-		initialized_greenhouse <= 1'd0;
-		initialized_ambient <= 1'd0;
-		initialized_geothermal <= 1'd0;
-		initialized_north <= 1'd0;
-		initialized_east <= 1'd0;
-		initialized_south <= 1'd0;
-		initialized_west <= 1'd0;
 		initialized <= 1'd1;
 	end
 end
 
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
-always@(state or ready or initialized_solar or initialized_greenhouse or initialized_ambient or initialized_geothermal or initialized_north or initialized_east or initialized_south or initialized_west)
+always@(state or ready)
 begin
 	next_start_solar = 1'd0;
 	next_start_greenhouse = 1'd0;
@@ -290,7 +265,7 @@ begin
 	next_two_bytes = 1'd0;
 	next_write_data = 8'd0; // We never write
 
-	switch(state)
+	case(state)
 	STATE_IDLE:
 	begin
 		if(ready)
@@ -373,7 +348,6 @@ begin
 	end
 	STATE_NORTH:
 	begin
-		
 		if(ready) 
 		begin 
 			next_state = STATE_EAST;
@@ -390,11 +364,10 @@ begin
 	end
 	STATE_EAST:
 	begin
-		
 		if(ready) 
 		begin 
 			next_state = STATE_SOUTH;
-			next_slave_addr = `SOURTH_ADDR;
+			next_slave_addr = `SOUTH_ADDR;
 			next_start_south = 1'd1;
 		end
 		else 
@@ -407,7 +380,6 @@ begin
 	end
 	STATE_SOUTH:
 	begin
-
 		if(ready) 
 		begin 
 			next_state = STATE_WEST;
@@ -415,7 +387,7 @@ begin
 			next_start_west = 1'd1;
 		end
 		else 
-		begin
+		begin	
 			next_state = STATE_SOUTH;
 			next_slave_addr = `SOUTH_ADDR;
 		end
@@ -424,7 +396,7 @@ begin
 	end
 	STATE_WEST:
 	begin
-		
+
 		if(ready) 
 		begin 
 			next_state = STATE_IDLE;
@@ -438,4 +410,4 @@ begin
 
 	endcase
 end
-endmodule
+endmodule 
