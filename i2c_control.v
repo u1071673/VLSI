@@ -25,14 +25,14 @@ localparam [7:0] STATE_IDLE = 8'd0, STATE_SOLAR = 8'd1, STATE_GREENHOUSE = 8'd2,
 wire [7:0] next_state;
 wire [7:0] next_write_data;
 wire [6:0] next_slave_addr;
-wire next_start_solar;
-wire next_start_greenhouse;
-wire next_start_ambient;
-wire next_start_geothermal;
-wire next_start_north;
-wire next_start_east;
-wire next_start_south;
-wire next_start_west;
+wire next_solar_start;
+wire next_greenhouse_start;
+wire next_ambient_start;
+wire next_geothermal_start;
+wire next_north_start;
+wire next_east_start;
+wire next_south_start;
+wire next_west_start;
 wire next_rw;
 wire next_two_bytes;
 wire solar_read_data;
@@ -66,7 +66,14 @@ reg [7:0] latched_w_lux;
 reg [7:0] state;
 reg [7:0] write_data;
 reg [6:0] slave_addr;
-reg start;
+reg solar_start;
+reg greenhouse_start;
+reg ambient_start;
+reg geothermal_start;
+reg north_start;
+reg east_start;
+reg south_start;
+reg west_start;
 reg two_bytes;
 reg rw;
 reg initialized;
@@ -78,7 +85,7 @@ i2c solar_ts (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_solar),
+	.start(solar_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -91,7 +98,7 @@ i2c greenhouse_ts (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_greenhouse),
+	.start(greenhouse_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -104,7 +111,7 @@ i2c ambient_ts (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_ambient),
+	.start(ambient_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -117,7 +124,7 @@ i2c geothermal_ts (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_geothermal),
+	.start(geothermal_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -130,7 +137,7 @@ i2c north_ts (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_north),
+	.start(north_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -143,7 +150,7 @@ i2c east_ls (
 	.slave_addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_east),
+	.start(east_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -156,7 +163,7 @@ i2c south_ls (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_south),
+	.start(south_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -169,7 +176,7 @@ i2c west_ls (
 	.addr(slave_addr), /* Set this to the address of the slave. */
 	.clk(clk),
 	.rst(rst),
-	.start(start_west),
+	.start(west_start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
@@ -185,14 +192,14 @@ begin
 	else if (initialized)
 	begin
 		state <= next_state;
-		start_solar <= next_start_solar;
-		start_greenhouse <= next_start_greenhouse;
-		start_ambient <= next_start_ambient;
-		start_geothermal <= next_start_geothermal;
-		start_north <= next_start_north;
-		start_east <= next_start_east;
-		start_south <= next_start_south;
-		start_west <= next_start_west;
+		solar_start <= next_solar_start;
+		greenhouse_start <= next_greenhouse_start;
+		ambient_start <= next_ambient_start;
+		geothermal_start <= next_geothermal_start;
+		north_start <= next_north_start;
+		east_start <= next_east_start;
+		south_start <= next_south_start;
+		west_start <= next_west_start;
 
 		case(state)
 		STATE_SOLAR:
@@ -234,17 +241,16 @@ begin
 		state <= STATE_IDLE;
 		write_data <= 8'd0;
 		slave_addr <= 8'd0;
-		start <= 1'd0;
 		two_bytes <= 1'd0;
 		rw <= 1'd0;
-		start_solar <= 1'd0;
-		start_greenhouse <= 1'd0;
-		start_ambient <= 1'd0;
-		start_geothermal <= 1'd0;
-		start_north <= 1'd0;
-		start_east <= 1'd0;
-		start_south <= 1'd0;
-		start_west <= 1'd0;
+		solar_start <= 1'd0;
+		greenhouse_start <= 1'd0;
+		ambient_start <= 1'd0;
+		geothermal_start <= 1'd0;
+		north_start <= 1'd0;
+		east_start <= 1'd0;
+		south_start <= 1'd0;
+		west_start <= 1'd0;
 		initialized <= 1'd1;
 	end
 end
@@ -252,14 +258,14 @@ end
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
 always@(state or ready)
 begin
-	next_start_solar = 1'd0;
-	next_start_greenhouse = 1'd0;
-	next_start_ambient = 1'd0;
-	next_start_geothermal = 1'd0;
-	next_start_north = 1'd0;
-	next_start_east = 1'd0;
-	next_start_south = 1'd0;
-	next_start_west = 1'd0;
+	next_solar_start = 1'd0;
+	next_greenhouse_start = 1'd0;
+	next_ambient_start = 1'd0;
+	next_geothermal_start = 1'd0;
+	next_north_start = 1'd0;
+	next_east_start = 1'd0;
+	next_south_start = 1'd0;
+	next_west_start = 1'd0;
 	next_slave_addr = 7'd0;
 	next_rw = 1'd0;
 	next_two_bytes = 1'd0;
@@ -272,7 +278,7 @@ begin
 		begin 
 			next_state = STATE_SOLAR;
 			next_slave_addr = `SOLAR_ADDR;
-			next_start_solar = 1'd1;
+			next_solar_start = 1'd1;
 		end
 		else 
 		begin
@@ -287,7 +293,7 @@ begin
 		begin 
 			next_state = STATE_GREENHOUSE;
 			next_slave_addr = `GREENHOUSE_ADDR;
-			next_start_greenhouse = 1'd1;
+			next_greenhouse_start = 1'd1;
 		end
 		else 
 		begin
@@ -303,7 +309,7 @@ begin
 		begin 
 			next_state = STATE_AMBIENT;
 			next_slave_addr = `AMBIENT_ADDR;
-			next_start_ambient = 1'd1;
+			next_ambient_start = 1'd1;
 		end
 		else 
 		begin
@@ -320,7 +326,7 @@ begin
 		begin 
 			next_state = STATE_GEOTHERMAL;
 			next_slave_addr = `GEOTHERMAL_ADDR;
-			next_start_geothermal = 1'd1;
+			next_geothermal_start = 1'd1;
 		end
 		else
 		begin
@@ -336,7 +342,7 @@ begin
 		begin 
 			next_state = STATE_NORTH;
 			next_slave_addr = `NORTH_ADDR;
-			next_start_north = 1'd1;
+			next_north_start = 1'd1;
 		end
 		else 
 		begin 
@@ -352,7 +358,7 @@ begin
 		begin 
 			next_state = STATE_EAST;
 			next_slave_addr = `EAST_ADDR;
-			next_start_east = 1'd1;
+			next_east_start = 1'd1;
 		end
 		else 
 		begin	
@@ -368,7 +374,7 @@ begin
 		begin 
 			next_state = STATE_SOUTH;
 			next_slave_addr = `SOUTH_ADDR;
-			next_start_south = 1'd1;
+			next_south_start = 1'd1;
 		end
 		else 
 		begin
@@ -384,7 +390,7 @@ begin
 		begin 
 			next_state = STATE_WEST;
 			next_slave_addr = `WEST_ADDR;
-			next_start_west = 1'd1;
+			next_west_start = 1'd1;
 		end
 		else 
 		begin	
