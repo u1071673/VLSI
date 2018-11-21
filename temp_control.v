@@ -1,8 +1,8 @@
 `define TH 8'd5
 
 module temp_control (
-input wire [7:0] cooldown_th, /* set only to value between 90-120 */
-input wire [7:0] heatup_th, /* set only to value between 10-80 */
+input wire [7:0] cooldown_th, /* set only to value between 90-120 (default 95) */
+input wire [7:0] heatup_th, /* set only to value between 10-80  (default 60) */
 input wire [7:0] greenhouse_temp,
 input wire clk,
 input wire rst,

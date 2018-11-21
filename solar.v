@@ -1,8 +1,8 @@
 module solar (
-	input wire [7:0] th, /* set this to a value between 2 - 200 */
+	input wire [15:0] th, /* set this to a value between 50 - 5000 (default is 2525, jump in increments of 50) */
 	input wire clk,
 	input wire rst,
-	input wire [7:0] lsn, lse, lss, lsw,
+	input wire [15:0] lsn, lse, lss, lsw,
 	output wire mn, me, ms, mw
 	);
 
@@ -10,10 +10,10 @@ localparam [2:0] STATE_IDLE = 3'd0, STATE_MN = 3'd1, STATE_ME = 3'd2, STATE_MS =
 reg [2:0] state, next_state;
 reg initialized;
 
-wire [7:0] lsn_th;
-wire [7:0] lse_th;
-wire [7:0] lss_th;
-wire [7:0] lsw_th;
+wire [15:0] lsn_th;
+wire [15:0] lse_th;
+wire [15:0] lss_th;
+wire [15:0] lsw_th;
 
 assign lsn_th = lsn + th;
 assign lse_th = lse + th;
