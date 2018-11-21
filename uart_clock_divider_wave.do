@@ -1,10 +1,10 @@
 onerror {resume}
 quietly WaveActivateNextPane {} 0
-add wave -noupdate /clock_divider_tb/clk
-add wave -noupdate /clock_divider_tb/reset
-add wave -noupdate /clock_divider_tb/clk_out
+add wave -noupdate /uart_clock_divider_tb/clk_in
+add wave -noupdate /uart_clock_divider_tb/rst
+add wave -noupdate /uart_clock_divider_tb/clk_out
 TreeUpdate [SetDefaultTree]
-WaveRestoreCursors {{Cursor 1} {0 ns} 0}
+WaveRestoreCursors {{Cursor 1} {0 ns} 1}
 quietly wave cursor active 0
 configure wave -namecolwidth 150
 configure wave -valuecolwidth 100
@@ -20,4 +20,4 @@ configure wave -griddelta 40
 configure wave -timeline 0
 configure wave -timelineunits ns
 update
-WaveRestoreZoom {0 ns} {1 us}
+WaveRestoreZoom {0 ns} {210 us}
