@@ -73,8 +73,6 @@ reg initialized_east;
 reg initialized_south;
 reg initialized_west;
 
-
-
 i2c solar_ts (
 	.write_data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
 	.slave_addr(slave_addr), /* Set this to the address of the slave. */
