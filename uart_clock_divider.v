@@ -1,5 +1,5 @@
 `define WIDTH 2604
-`define N 5208
+`define N (`WIDTH'd5208)
 
 module uart_clock_divider(
   input clk_in,
@@ -18,13 +18,13 @@ always @(posedge clk_in or posedge rst)
 begin
   if (rst)
   begin
-    r_reg <= 0;
+    r_reg <= `WIDTH'd0;
     clk_track <= 1'b0;
   end
 
   else if (r_nxt == `N)
   begin
-    r_reg <= 0;
+    r_reg <= `WIDTH'd0;
     clk_track <= ~clk_track;
   end
 
