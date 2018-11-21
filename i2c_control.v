@@ -43,8 +43,22 @@ wire next_initialized_south;
 wire next_initialized_west;
 wire next_rw;
 wire next_two_bytes;
-
-
+wire solar_read_data;
+wire greenhouse_read_data;
+wire ambient_read_data;
+wire geothermal_read_data;
+wire north_read_data;
+wire east_read_data;
+wire south_read_data;
+wire west_read_data;
+wire solar_ready;
+wire greenhouse_ready;
+wire ambient_ready;
+wire geothermal_ready;
+wire north_ready;
+wire east_ready;
+wire south_ready;
+wire west_ready;
 wire ready;
 wire sda;
 wire scl;
@@ -59,7 +73,6 @@ reg [7:0] latched_s_lux;
 reg [7:0] latched_w_lux; 
 reg [7:0] state;
 reg [7:0] write_data;
-reg [7:0] read_data;
 reg [6:0] slave_addr;
 reg start;
 reg two_bytes;
@@ -74,6 +87,7 @@ reg initialized_east;
 reg initialized_south;
 reg initialized_west;
 
+assign ready = solar_ready && greenhouse_ready && ambient_ready && geothermal_ready && north_ready && east_ready && south_ready && west_ready;
 
 i2c solar_ts (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -85,8 +99,8 @@ i2c solar_ts (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(solar_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(solar_ready)
 	);
 i2c greenhouse_ts (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -98,8 +112,8 @@ i2c greenhouse_ts (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(greenhouse_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(greenhouse_ready)
 	);
 i2c ambient_ts (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -111,8 +125,8 @@ i2c ambient_ts (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(ambient_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(ambient_ready)
 	);
 i2c geothermal_ts (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -124,8 +138,8 @@ i2c geothermal_ts (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(geothermal_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(geothermal_ready)
 	);
 i2c north_ts (
 	.wata(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -137,8 +151,8 @@ i2c north_ts (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(north_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(north_ready)
 	);
 i2c east_ls (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -150,8 +164,8 @@ i2c east_ls (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(east_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(east_ready)
 	);
 i2c south_ls (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -163,8 +177,8 @@ i2c south_ls (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(south_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(south_ready)
 	);
 i2c west_ls (
 	.data(write_data), /* Set this to the write_data we want to send to the slave. If we are reading this should be 16'd0 */
@@ -176,8 +190,8 @@ i2c west_ls (
 	.rw(rw), /* 0 = write, 1 = read */
 	.sda(sda),
 	.scl(scl),
-	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
-	.ready(ready)
+	.read_data(west_read_data), /* This is set to the write_data retrieved from the slave */
+	.ready(west_ready)
 	);
 
 // UPDATE STATE SEQUENTIAL LOGIC
@@ -199,35 +213,35 @@ begin
 		switch(state)
 		STATE_SOLAR:
 		begin
-			if(ready) latched_solar_celcius <= read_data;
+			if(ready) latched_solar_celcius <= solar_read_data;
 		end
 		STATE_GREENHOUSE:
 		begin
-			if(ready) latched_greenhouse_celcius <= read_data;
+			if(ready) latched_greenhouse_celcius <= greenhouse_read_data;
 		end
 		STATE_AMBIENT:
 		begin
-			if(ready) latched_ambient_celcius <= read_data;
+			if(ready) latched_ambient_celcius <= ambient_read_data;
 		end
 		STATE_GEOTHERMAL:
 		begin
-			if(ready) latched_geothermal_celcius <= read_data;
+			if(ready) latched_geothermal_celcius <= geothermal_read_data;
 		end
 		STATE_NORTH:
 		begin
-			if(ready) latched_n_lux <= read_data;
+			if(ready) latched_n_lux <= north_read_data;
 		end
 		STATE_EAST:
 		begin
-			if(ready) latched_e_lux <= read_data;
+			if(ready) latched_e_lux <= east_read_data;
 		end
 		STATE_SOUTH:
 		begin
-			if(ready) latched_s_lux <= read_data;
+			if(ready) latched_s_lux <= south_read_data;
 		end
 		STATE_WEST:
 		begin
-			if(ready) latched_w_lux <= read_data;
+			if(ready) latched_w_lux <= west_read_data;
 		end
 		endcase
 	end
