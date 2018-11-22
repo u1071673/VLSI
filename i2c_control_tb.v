@@ -20,11 +20,14 @@ module i2c_control_tb;
   wire [15:0] e_lux;
   wire [15:0] s_lux;
   wire [15:0] w_lux;
-
+  wire sda;
+  wire scl;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
   i2c_control uut(
     .rst(rst),
+    .sda(sda),
+    .scl(scl),
     .solar_celcius(solar_celcius),
     .greenhouse_celcius(greenhouse_celcius),
     .ambient_celcius(ambient_celcius),

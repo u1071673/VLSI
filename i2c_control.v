@@ -10,6 +10,8 @@
 module i2c_control (
 	input wire clk,
 	input wire rst,
+	inout wire sda,
+	inout wire scl,
 	output signed wire [8:0] solar_celcius,
 	output signed wire [8:0] greenhouse_celcius,
 	output signed wire [8:0] ambient_celcius,
