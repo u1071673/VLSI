@@ -27,7 +27,7 @@ begin
     state <= next_state;
     count <= next_count;
     if (state == STATE_DATA) latched_data[count] <= rx;
-    if (state == STATE_DATA_IDLE) latched_data <= 8'd0;
+    if (state == STATE_DATA_READY) latched_data <= 8'd0;
   end
   else
   begin
