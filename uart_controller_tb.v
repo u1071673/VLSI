@@ -61,188 +61,188 @@ module uart_controller_tb;
     test_start = 0;
     data_tx = 0;
     // WAIT 10ns FOR GLOBAL RESET TO FINISH
-    #100;
+    #10;
     // ADD STIMULUS HERE
     test = TEST1;
     data_tx = "A";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST2;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST3;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST4;
     data_tx = "B";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST5;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST6;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST7;
     data_tx = "C";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST8;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST9;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST10;
     data_tx = "D";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST11;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST12;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST13;
     data_tx = "E";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST14;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST15;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST16;
     data_tx = "F";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST17;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST18;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST19;
     data_tx = "G";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST20;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST21;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST22;
     data_tx = "H";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST23;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST24;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     test = TEST25;
     data_tx = "I";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
     
     test = TEST26;
     data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
     test = TEST27;
     data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
-    #100;
+    #300;
 
   end
 
