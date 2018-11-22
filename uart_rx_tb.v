@@ -60,6 +60,20 @@ module uart_rx_tb;
 
     #300;
 
+    
+    test = TEST3;
+    data_tx = 8'h00;
+    start = 1; #5;
+    start = 0; #5;
+
+    #300;
+
+    test = TEST4;
+    data_tx = 8'hFF;
+    start = 1; #5;
+    start = 0; #5;
+
+    #300;
   end
 
 endmodule

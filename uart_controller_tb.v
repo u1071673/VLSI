@@ -6,7 +6,6 @@ module uart_controller_tb;
   // INPUTS
   reg clk;
   reg rst;
-  reg rx;
   reg test_start;
   reg [7:0] data_tx; /* Set this to the data we want to send to the uart controller */
 
@@ -23,14 +22,14 @@ module uart_controller_tb;
   wire tx;
   wire test_tx;
   wire idle_ready_tx;
-  
+assign start = test_start;
 
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
 uart_tx uut_tx(
     .clk(clk),
     .rst(rst),
-    .start(test_start),
+    .start(start),
     .data(data_tx),
     .tx(test_tx),
     .idle_ready(idle_ready_tx)
@@ -39,7 +38,7 @@ uart_tx uut_tx(
 uart_controller uut(
   .clk(clk),
   .rst(rst),
-  .rx(rx),
+  .rx(test_tx),
   .solar_th(solar_th),
   .solar_cooldown_th(solar_cooldown_th),
   .solar_heatup_th(solar_heatup_th),
@@ -58,10 +57,8 @@ uart_controller uut(
     // INITIALIZE INPUTS
     clk = 0;
     rst = 0;
-    rx = 0;
     test_start = 0;
     data_tx = 0;
-
     // WAIT 10ns FOR GLOBAL RESET TO FINISH
     #100;
     // ADD STIMULUS HERE
@@ -73,14 +70,14 @@ uart_controller uut(
     #100;
     
     test = TEST2;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST3;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -93,14 +90,14 @@ uart_controller uut(
     #100;
     
     test = TEST5;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST6;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -113,14 +110,14 @@ uart_controller uut(
     #100;
     
     test = TEST8;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST9;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -133,14 +130,14 @@ uart_controller uut(
     #100;
     
     test = TEST11;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST12;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -153,14 +150,14 @@ uart_controller uut(
     #100;
     
     test = TEST14;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST15;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -173,14 +170,14 @@ uart_controller uut(
     #100;
     
     test = TEST17;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST18;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -193,14 +190,14 @@ uart_controller uut(
     #100;
     
     test = TEST20;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST21;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -213,14 +210,14 @@ uart_controller uut(
     #100;
     
     test = TEST23;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST24;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 
@@ -233,14 +230,14 @@ uart_controller uut(
     #100;
     
     test = TEST26;
-    data_tx = "w"
+    data_tx = "w";
     test_start = 1; #5;
     test_start = 0; #5;
 
     #100;
 
     test = TEST27;
-    data_tx = "s"
+    data_tx = "s";
     test_start = 1; #5;
     test_start = 0; #5;
 

@@ -28,8 +28,11 @@ reg [7:0] actual_ambient_heatup_th, next_actual_ambient_heatup_th; /* set only t
 reg [7:0] actual_geothermal_cooldown_th, next_actual_geothermal_cooldown_th; /* set only to value between 32 - 50 (default 35) */
 reg [7:0] actual_geothermal_heatup_th, next_actual_geothermal_heatup_th; /* set only to value between -12 - 27  (default 16) */
 reg [7:0] latched_data_tx, next_data_tx;
-reg [3:0] state, next_state, mode, next_mode;
+reg [7:0] state, next_state, mode, next_mode;
 reg initialized, latched_start_tx, next_start_tx;
+
+wire [7:0] data_rx;
+wire [7:0] data_tx;
 
 assign solar_th = actual_solar_th;
 assign solar_cooldown_th = actual_solar_cooldown_th;
@@ -106,10 +109,14 @@ begin
 	next_actual_ambient_heatup_th = actual_ambient_heatup_th;
 	next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th;
 	next_actual_geothermal_heatup_th = actual_geothermal_heatup_th;
+	next_state = STATE_IDLE;
 	case(state)
 		STATE_IDLE:
 		begin
-
+			if(data_ready_rx)
+			begin
+				next_state = STATE_IDLE;
+			end
 			if(data_ready_rx && (data_rx == STATE_INCREMENT || data_rx == STATE_DECREMENT))
 			begin
 				if(idle_ready_tx)
