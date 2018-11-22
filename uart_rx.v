@@ -4,15 +4,15 @@ input wire clk, /*input clock must be 9600 baud rate*/
 input wire rst,
 input wire rx,
 output wire [7:0] data,
-output wire ready
+output wire data_ready
 );
 
-localparam [1:0] STATE_IDLE = 2'd0, STATE_DATA = 2'd1, STATE_STOP = 2'd2;
+localparam [2:0] STATE_IDLE = 3'd0, STATE_DATA = 3'd1, STATE_DATA_READY = 3'd2, STATE_STOP = 3'd3;
 reg [7:0] count, next_count, latched_data;
 reg [1:0] state, next_state;
 reg initialized;
 // OUTPUT COMBINATIONAL LOGIC
-assign ready = (state == STATE_IDLE) && !(rst);
+assign data_ready = (state == STATE_DATA_READY || state == STATE_STOP);
 assign data = latched_data;
 
 //UPDATE STATE SEQUENTIAL LOGIC
@@ -26,7 +26,8 @@ begin
   begin
     state <= next_state;
     count <= next_count;
-    if (state == STATE_DATA) latched_data[count] = rx;
+    if (state == STATE_DATA) latched_data[count] <= rx;
+    if (state == STATE_DATA_IDLE) latched_data <= 8'd0;
   end
   else
   begin
@@ -55,13 +56,18 @@ begin
   begin
     if (count == 8'd7)
     begin
-      next_state = STATE_STOP;
+      next_state = STATE_DATA_READY;
     end
     else
     begin
       next_state = STATE_DATA;
       next_count = count + 8'd1;
     end
+  end
+
+  STATE_DATA_READY:
+  begin
+    next_state = STATE_STOP;
   end
 
   STATE_STOP:

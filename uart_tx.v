@@ -6,7 +6,7 @@ input wire rst,
 input wire start,
 input wire [7:0] data, /* Set this to the data we want to send to the reciever */
 output wire tx,
-output wire ready
+output wire idle_ready
 );
 
 localparam [1:0] STATE_IDLE = 2'd0, STATE_START = 2'd1, STATE_DATA = 2'd2;
@@ -14,7 +14,7 @@ reg [7:0] count, next_count, latched_data;
 reg [1:0] state, next_state;
 reg initialized, bit, next_bit;
 // OUTPUT COMBINATIONAL LOGIC
-assign ready = (state == STATE_IDLE) && !(rst);
+assign idle_ready = (state == STATE_IDLE) && !(rst);
 assign tx = bit;
 
 // UPDATE STATE SEQUENTIAL LOGIC

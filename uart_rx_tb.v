@@ -13,8 +13,8 @@ module uart_rx_tb;
   wire rx;
   wire tx;
   wire [7:0] data_rx;
-  wire ready_tx;
-  wire ready_rx;
+  wire data_ready_rx;
+  wire idle_ready_tx;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
   uart_rx uut_rx(
@@ -22,7 +22,7 @@ module uart_rx_tb;
     .rst(rst),
     .data(data_rx),
     .rx(rx),
-    .ready(ready_rx)
+    .data_ready(data_ready_rx)
   );
 
   uart_tx uut_tx(
@@ -31,7 +31,7 @@ module uart_rx_tb;
       .start(start),
       .data(data_tx),
       .tx(tx),
-      .ready(ready_tx)
+      .idle_ready(idle_ready_tx)
   );
 
   assign rx = tx;

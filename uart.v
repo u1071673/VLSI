@@ -7,8 +7,8 @@ input wire rx,
 input wire start_tx,
 output wire [7:0] data_rx,
 output wire tx,
-output wire ready_tx,
-output wire ready_rx
+output wire idle_ready_tx,
+output wire data_ready_rx,
 );
 
 
@@ -17,7 +17,7 @@ output wire ready_rx
     .rst(rst),
     .data(data_rx),
     .rx(rx),
-    .ready(ready_rx)
+    .data_ready(data_ready_rx),
   );
 
   uart_tx tx_module(
@@ -26,7 +26,7 @@ output wire ready_rx
       .start(start_tx),
       .data(data_tx),
       .tx(tx),
-      .ready(ready_tx)
+      .idle_ready(idle_ready_tx)
   );
 
 endmodule

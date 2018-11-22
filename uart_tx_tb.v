@@ -11,7 +11,7 @@ module uart_tx_tb;
 
   // OUTPUTS
   wire tx;
-  wire ready;
+  wire idle_ready;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
   uart_tx uut(
@@ -20,7 +20,7 @@ module uart_tx_tb;
       .start(start),
       .data(data),
       .tx(tx),
-      .ready(ready)
+      .idle_ready(idle_ready)
   );
 
   always #2.5 clk = ~clk;
