@@ -15,7 +15,7 @@ module uart_controller(
 	output wire tx
 	);
 
-localparam [7:0] STATE_IDLE = 8'd0, STATE_TRANSMIT_TH = 8'd1, STATE_TRANSMIT_TH_SOLAR_LSBYTE = 8'd2, STATE_INCREMENT = "w", STATE_DECREMENT = "s";
+localparam [7:0] STATE_IDLE = 8'd0, STATE_TRANSMIT_TH_BUFFER = 8'd1, STATE_TRANSMIT_TH = 8'd2, STATE_TRANSMIT_TH_SOLAR_BUFFER = 8'd3, STATE_TRANSMIT_TH_SOLAR_MSBYTE = 8'd4, STATE_IDLE_BUFFER = 8'd5, STATE_INCREMENT = "w", STATE_DECREMENT = "s";
 localparam [7:0] SOLAR_MODE = "A", SOLAR_COOLDOWN_MODE = "B", SOLAR_HEATUP_MODE = "C", GREENHOUSE_COOLDOWN_MODE = "D", GREENHOUSE_HEATUP_MODE = "E", AMBIENT_COOLDOWN_MODE = "F", AMBIENT_HEATUP_MODE = "G", GEOTHERMAL_COOLDOWN_MODE = "H", GEOTHERMAL_HEATUP_MODE = "I";
 
 reg [15:0] actual_solar_th, next_actual_solar_th; /* set this to a value between 50 - 5000 (default is 2550, jump in increments of 50) */
@@ -147,7 +147,7 @@ begin
 		end
 		STATE_INCREMENT:
 		begin
-			next_state = STATE_TRANSMIT_TH;
+			next_state = STATE_TRANSMIT_TH_BUFFER;
 			case(mode)
 				SOLAR_MODE: if(actual_solar_th < 16'd5000) next_actual_solar_th = actual_solar_th + 16'd50;
 				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th < 8'sd50) next_actual_solar_cooldown_th = actual_solar_cooldown_th + 16'sd1;
@@ -162,7 +162,7 @@ begin
 		end
 		STATE_DECREMENT:
 		begin
-			next_state = STATE_TRANSMIT_TH;
+			next_state = STATE_TRANSMIT_TH_BUFFER;
 			case(mode)
 				SOLAR_MODE: if(actual_solar_th > 16'd50) next_actual_solar_th = actual_solar_th - 16'd50;
 				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th > 8'sd32) next_actual_solar_cooldown_th = actual_solar_cooldown_th - 16'sd1;
@@ -175,6 +175,10 @@ begin
 				GEOTHERMAL_HEATUP_MODE: if(actual_geothermal_heatup_th > -8'sd12) next_actual_geothermal_heatup_th = actual_geothermal_heatup_th - 16'sd1;
 			endcase
 		end
+		STATE_TRANSMIT_TH_BUFFER:
+		begin
+			next_state = STATE_TRANSMIT_TH;
+		end
 		STATE_TRANSMIT_TH:
 		begin
 			case(mode)
@@ -182,8 +186,8 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_TRANSMIT_TH_SOLAR_LSBYTE;
-						next_data_tx = actual_solar_th[15:8]; // SEND MSBYTE
+						next_state = STATE_TRANSMIT_TH_SOLAR_BUFFER;
+						next_data_tx = actual_solar_th[7:0]; // SEND LSBYTE
 						next_start_tx = 1'd1;
 					end
 					else
@@ -195,7 +199,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_solar_cooldown_th;
 						next_start_tx = 1'd1;
 					end
@@ -208,7 +212,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_solar_heatup_th;
 						next_start_tx = 1'd1;
 					end
@@ -221,7 +225,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_greenhouse_cooldown_th;
 						next_start_tx = 1'd1;
 					end
@@ -234,7 +238,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_greenhouse_heatup_th;
 						next_start_tx = 1'd1;
 					end
@@ -247,7 +251,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_ambient_cooldown_th;
 						next_start_tx = 1'd1;
 					end
@@ -260,7 +264,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_ambient_heatup_th;
 						next_start_tx = 1'd1;
 					end
@@ -273,7 +277,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_geothermal_cooldown_th;
 						next_start_tx = 1'd1;
 					end
@@ -286,7 +290,7 @@ begin
 				begin
 					if(idle_ready_tx)
 					begin
-						next_state = STATE_IDLE;
+						next_state = STATE_IDLE_BUFFER;
 						next_data_tx = actual_geothermal_heatup_th;
 						next_start_tx = 1'd1;
 					end
@@ -297,19 +301,30 @@ begin
 				end
 			endcase
 		end
-		STATE_TRANSMIT_TH_SOLAR_LSBYTE:
-		default:
+		STATE_TRANSMIT_TH_SOLAR_BUFFER:
+		begin
+			next_state = STATE_TRANSMIT_TH_SOLAR_MSBYTE;
+		end
+		STATE_TRANSMIT_TH_SOLAR_MSBYTE:
 		begin
 			if(idle_ready_tx)
 			begin
-				next_state = STATE_IDLE;
-				next_data_tx = actual_solar_th[7:0];
-				next_start = 1'd1;
+				next_state = STATE_IDLE_BUFFER;
+				next_data_tx = actual_solar_th[15:8];
+				next_start_tx = 1'd1;
 			end
 			else
 			begin
 				next_state = state;
 			end
+		end
+		STATE_IDLE_BUFFER:
+		begin
+			next_state = STATE_IDLE;
+		end
+		default:
+		begin
+			next_state = STATE_IDLE;
 		end
 	endcase
 end
