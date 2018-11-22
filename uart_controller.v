@@ -3,31 +3,31 @@ module uart_controller(
 	input wire clk,
 	input wire rst,
 	input wire rx,
-	output wire [15:0] solar_th,
-	output wire [7:0] solar_cooldown_th,
-	output wire [7:0] solar_heatup_th,
-	output wire [7:0] greenhouse_cooldown_th,
-	output wire [7:0] greenhouse_heatup_th,
-	output wire [7:0] ambient_cooldown_th,
-	output wire [7:0] ambient_heatup_th,
-	output wire [7:0] geothermal_cooldown_th,
-	output wire [7:0] geothermal_heatup_th,
+	output wire signed [15:0] solar_th,
+	output wire signed [7:0] solar_cooldown_th,
+	output wire signed [7:0] solar_heatup_th,
+	output wire signed [7:0] greenhouse_cooldown_th,
+	output wire signed [7:0] greenhouse_heatup_th,
+	output wire signed [7:0] ambient_cooldown_th,
+	output wire signed [7:0] ambient_heatup_th,
+	output wire signed [7:0] geothermal_cooldown_th,
+	output wire signed [7:0] geothermal_heatup_th,
 	output wire tx
 	);
 
 localparam [7:0] STATE_IDLE = 8'd0, STATE_INCREMENT = "w", STATE_DECREMENT = "s";
 localparam [7:0] SOLAR_MODE = "A", SOLAR_COOLDOWN_MODE = "B", SOLAR_HEATUP_MODE = "C", GREENHOUSE_COOLDOWN_MODE = "D", GREENHOUSE_HEATUP_MODE = "E", AMBIENT_COOLDOWN_MODE = "F", AMBIENT_HEATUP_MODE = "G", GEOTHERMAL_COOLDOWN_MODE = "H", GEOTHERMAL_HEATUP_MODE = "I";
 
-reg [15:0] actual_solar_th, next_actual_solar_th; /* set this to a value between 50 - 5000 (default is 2550, jump in increments of 50) */
-reg [7:0] actual_solar_cooldown_th, next_actual_solar_cooldown_th; /* set only to value between 32 - 50 (default 35) */
-reg [7:0] actual_solar_heatup_th, next_actual_solar_heatup_th; /* set only to value between -12 - 27  (default 16) */
-reg [7:0] actual_greenhouse_cooldown_th, next_actual_greenhouse_cooldown_th; /* set only to value between 32 - 50 (default 35) */
-reg [7:0] actual_greenhouse_heatup_th, next_actual_greenhouse_heatup_th; /* set only to value between -12 - 27  (default 16) */
-reg [7:0] actual_ambient_cooldown_th, next_actual_ambient_cooldown_th; /* set only to value between 32 - 50 (default 35) */
-reg [7:0] actual_ambient_heatup_th, next_actual_ambient_heatup_th; /* set only to value between -12 - 27  (default 16) */
-reg [7:0] actual_geothermal_cooldown_th, next_actual_geothermal_cooldown_th; /* set only to value between 32 - 50 (default 35) */
-reg [7:0] actual_geothermal_heatup_th, next_actual_geothermal_heatup_th; /* set only to value between -12 - 27  (default 16) */
-reg [7:0] latched_data_tx, next_data_tx;
+reg signed [15:0] actual_solar_th, next_actual_solar_th; /* set this to a value between 50 - 5000 (default is 2550, jump in increments of 50) */
+reg signed [7:0] actual_solar_cooldown_th, next_actual_solar_cooldown_th; /* set only to value between 32 - 50 (default 35) */
+reg signed [7:0] actual_solar_heatup_th, next_actual_solar_heatup_th; /* set only to value between -12 - 27  (default 16) */
+reg signed [7:0] actual_greenhouse_cooldown_th, next_actual_greenhouse_cooldown_th; /* set only to value between 32 - 50 (default 35) */
+reg signed [7:0] actual_greenhouse_heatup_th, next_actual_greenhouse_heatup_th; /* set only to value between -12 - 27  (default 16) */
+reg signed [7:0] actual_ambient_cooldown_th, next_actual_ambient_cooldown_th; /* set only to value between 32 - 50 (default 35) */
+reg signed [7:0] actual_ambient_heatup_th, next_actual_ambient_heatup_th; /* set only to value between -12 - 27  (default 16) */
+reg signed [7:0] actual_geothermal_cooldown_th, next_actual_geothermal_cooldown_th; /* set only to value between 32 - 50 (default 35) */
+reg signed [7:0] actual_geothermal_heatup_th, next_actual_geothermal_heatup_th; /* set only to value between -12 - 27  (default 16) */
+reg signed [7:0] latched_data_tx, next_data_tx;
 reg [7:0] state, next_state, mode, next_mode;
 reg initialized, latched_start_tx, next_start_tx;
 
