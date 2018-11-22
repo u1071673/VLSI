@@ -3,7 +3,7 @@ module uart_controller(
 	input wire clk,
 	input wire rst,
 	input wire rx,
-	output wire signed [15:0] solar_th,
+	output wire [15:0] solar_th,
 	output wire signed [7:0] solar_cooldown_th,
 	output wire signed [7:0] solar_heatup_th,
 	output wire signed [7:0] greenhouse_cooldown_th,
@@ -18,7 +18,7 @@ module uart_controller(
 localparam [7:0] STATE_IDLE = 8'd0, STATE_INCREMENT = "w", STATE_DECREMENT = "s";
 localparam [7:0] SOLAR_MODE = "A", SOLAR_COOLDOWN_MODE = "B", SOLAR_HEATUP_MODE = "C", GREENHOUSE_COOLDOWN_MODE = "D", GREENHOUSE_HEATUP_MODE = "E", AMBIENT_COOLDOWN_MODE = "F", AMBIENT_HEATUP_MODE = "G", GEOTHERMAL_COOLDOWN_MODE = "H", GEOTHERMAL_HEATUP_MODE = "I";
 
-reg signed [15:0] actual_solar_th, next_actual_solar_th; /* set this to a value between 50 - 5000 (default is 2550, jump in increments of 50) */
+reg [15:0] actual_solar_th, next_actual_solar_th; /* set this to a value between 50 - 5000 (default is 2550, jump in increments of 50) */
 reg signed [7:0] actual_solar_cooldown_th, next_actual_solar_cooldown_th; /* set only to value between 32 - 50 (default 35) */
 reg signed [7:0] actual_solar_heatup_th, next_actual_solar_heatup_th; /* set only to value between -12 - 27  (default 16) */
 reg signed [7:0] actual_greenhouse_cooldown_th, next_actual_greenhouse_cooldown_th; /* set only to value between 32 - 50 (default 35) */
@@ -83,14 +83,14 @@ begin
   		state <= STATE_IDLE;
   		mode <= SOLAR_MODE;
   		actual_solar_th <= 16'd2550;
-  		actual_solar_cooldown_th <= 8'd35;
-  		actual_solar_heatup_th <= 8'd16;
-  		actual_greenhouse_cooldown_th <= 8'd35;
-  		actual_greenhouse_heatup_th <= 8'd16;
-  		actual_ambient_cooldown_th <= 8'd35;
-  		actual_ambient_heatup_th <= 8'd16;
-  		actual_geothermal_cooldown_th <= 8'd35;
-  		actual_geothermal_heatup_th <= 8'd16;
+  		actual_solar_cooldown_th <= 8'sd35;
+  		actual_solar_heatup_th <= 8'sd16;
+  		actual_greenhouse_cooldown_th <= 8'sd35;
+  		actual_greenhouse_heatup_th <= 8'sd16;
+  		actual_ambient_cooldown_th <= 8'sd35;
+  		actual_ambient_heatup_th <= 8'sd16;
+  		actual_geothermal_cooldown_th <= 8'sd35;
+  		actual_geothermal_heatup_th <= 8'sd16;
   		initialized <= 1'd1;
   	end
   end
@@ -150,14 +150,14 @@ begin
 			next_state = STATE_IDLE;
 			case(mode)
 				SOLAR_MODE: if(actual_solar_th < 16'd5000) next_actual_solar_th = actual_solar_th + 16'd50;
-				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th < 8'd50) next_actual_solar_cooldown_th = actual_solar_cooldown_th + 16'd1;
-				SOLAR_HEATUP_MODE: if(actual_solar_heatup_th < 8'd27) next_actual_solar_heatup_th = actual_solar_heatup_th + 16'd1;
-				GREENHOUSE_COOLDOWN_MODE: if(actual_greenhouse_cooldown_th < 8'd50) next_actual_greenhouse_cooldown_th = actual_greenhouse_cooldown_th + 16'd1;
-				GREENHOUSE_HEATUP_MODE: if(actual_greenhouse_heatup_th < 8'd27) next_actual_greenhouse_heatup_th = actual_greenhouse_heatup_th + 16'd1;
-				AMBIENT_COOLDOWN_MODE: if(actual_ambient_cooldown_th < 8'd50) next_actual_ambient_cooldown_th =actual_ambient_cooldown_th + 16'd1;
-				AMBIENT_HEATUP_MODE: if(actual_ambient_heatup_th < 8'd27) next_actual_ambient_heatup_th = actual_ambient_heatup_th + 16'd1;
-				GEOTHERMAL_COOLDOWN_MODE: if(actual_geothermal_cooldown_th < 8'd50) next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th + 16'd1;
-				GEOTHERMAL_HEATUP_MODE: if(actual_geothermal_heatup_th < 8'd27) next_actual_geothermal_heatup_th = actual_geothermal_heatup_th + 16'd1;
+				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th < 8'sd50) next_actual_solar_cooldown_th = actual_solar_cooldown_th + 16'sd1;
+				SOLAR_HEATUP_MODE: if(actual_solar_heatup_th < 8'sd27) next_actual_solar_heatup_th = actual_solar_heatup_th + 16'sd1;
+				GREENHOUSE_COOLDOWN_MODE: if(actual_greenhouse_cooldown_th < 8'sd50) next_actual_greenhouse_cooldown_th = actual_greenhouse_cooldown_th + 16'sd1;
+				GREENHOUSE_HEATUP_MODE: if(actual_greenhouse_heatup_th < 8'sd27) next_actual_greenhouse_heatup_th = actual_greenhouse_heatup_th + 16'sd1;
+				AMBIENT_COOLDOWN_MODE: if(actual_ambient_cooldown_th < 8'sd50) next_actual_ambient_cooldown_th =actual_ambient_cooldown_th + 16'sd1;
+				AMBIENT_HEATUP_MODE: if(actual_ambient_heatup_th < 8'sd27) next_actual_ambient_heatup_th = actual_ambient_heatup_th + 16'sd1;
+				GEOTHERMAL_COOLDOWN_MODE: if(actual_geothermal_cooldown_th < 8'sd50) next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th + 16'sd1;
+				GEOTHERMAL_HEATUP_MODE: if(actual_geothermal_heatup_th < 8'sd27) next_actual_geothermal_heatup_th = actual_geothermal_heatup_th + 16'sd1;
 			endcase
 		end
 		STATE_DECREMENT:
@@ -165,14 +165,14 @@ begin
 			next_state = STATE_IDLE;
 			case(mode)
 				SOLAR_MODE: if(actual_solar_th > 16'd50) next_actual_solar_th = actual_solar_th - 16'd50;
-				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th > 8'd32) next_actual_solar_cooldown_th = actual_solar_cooldown_th - 16'd1;
-				SOLAR_HEATUP_MODE: if(actual_solar_heatup_th > -8'd12) next_actual_solar_heatup_th = actual_solar_heatup_th - 16'd1;
-				GREENHOUSE_COOLDOWN_MODE: if(actual_greenhouse_cooldown_th > 8'd32) next_actual_greenhouse_cooldown_th = actual_greenhouse_cooldown_th - 16'd1;
-				GREENHOUSE_HEATUP_MODE: if(actual_greenhouse_heatup_th > -8'd12) next_actual_greenhouse_heatup_th = actual_greenhouse_heatup_th - 16'd1;
-				AMBIENT_COOLDOWN_MODE: if(actual_ambient_cooldown_th > 8'd32) next_actual_ambient_cooldown_th = actual_ambient_cooldown_th - 16'd1;
-				AMBIENT_HEATUP_MODE: if(actual_ambient_heatup_th > -8'd12) next_actual_ambient_heatup_th = actual_ambient_heatup_th - 16'd1;
-				GEOTHERMAL_COOLDOWN_MODE: if(actual_geothermal_cooldown_th > 8'd32) next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th - 16'd1;
-				GEOTHERMAL_HEATUP_MODE: if(actual_geothermal_heatup_th > -8'd12) next_actual_geothermal_heatup_th = actual_geothermal_heatup_th - 16'd1;
+				SOLAR_COOLDOWN_MODE: if(actual_solar_cooldown_th > 8'sd32) next_actual_solar_cooldown_th = actual_solar_cooldown_th - 16'sd1;
+				SOLAR_HEATUP_MODE: if(actual_solar_heatup_th > -8'sd12) next_actual_solar_heatup_th = actual_solar_heatup_th - 16'sd1;
+				GREENHOUSE_COOLDOWN_MODE: if(actual_greenhouse_cooldown_th > 8'sd32) next_actual_greenhouse_cooldown_th = actual_greenhouse_cooldown_th - 16'sd1;
+				GREENHOUSE_HEATUP_MODE: if(actual_greenhouse_heatup_th > -8'sd12) next_actual_greenhouse_heatup_th = actual_greenhouse_heatup_th - 16'sd1;
+				AMBIENT_COOLDOWN_MODE: if(actual_ambient_cooldown_th > 8'sd32) next_actual_ambient_cooldown_th = actual_ambient_cooldown_th - 16'sd1;
+				AMBIENT_HEATUP_MODE: if(actual_ambient_heatup_th > -8'sd12) next_actual_ambient_heatup_th = actual_ambient_heatup_th - 16'sd1;
+				GEOTHERMAL_COOLDOWN_MODE: if(actual_geothermal_cooldown_th > 8'sd32) next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th - 16'sd1;
+				GEOTHERMAL_HEATUP_MODE: if(actual_geothermal_heatup_th > -8'sd12) next_actual_geothermal_heatup_th = actual_geothermal_heatup_th - 16'sd1;
 			endcase
 		end
 		default:
