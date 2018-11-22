@@ -1,11 +1,11 @@
 
 module uart_rx (
-input wire clk, /*input clock must be 9600 baud rate*/
-input wire rst,
-input wire rx,
-output wire [7:0] data,
-output wire data_ready
-);
+  input wire clk, /*input clock must be 9600 baud rate*/
+  input wire rst,
+  input wire rx,
+  output wire [7:0] data,
+  output wire data_ready
+  );
 
 localparam [3:0] STATE_IDLE = 4'd0, STATE_DATA = 4'd1, STATE_DATA_READY = 4'd2, STATE_STOP = 4'd3;
 reg [7:0] count, next_count, latched_data;
@@ -43,42 +43,42 @@ always@(state or count or rx)
 begin
   next_count = 1'b0;
   case(state)
-  STATE_IDLE:
-  begin
-    if(~rx)
+    STATE_IDLE:
     begin
-      next_state = STATE_DATA;
+      if(~rx)
+      begin
+        next_state = STATE_DATA;
+      end
+      else next_state = STATE_IDLE;
     end
-    else next_state = STATE_IDLE;
-  end
 
-  STATE_DATA:
-  begin
-    if (count == 8'd7)
+    STATE_DATA:
     begin
-      next_state = STATE_DATA_READY;
+      if (count == 8'd7)
+      begin
+        next_state = STATE_DATA_READY;
+      end
+      else
+      begin
+        next_state = STATE_DATA;
+        next_count = count + 8'd1;
+      end
     end
-    else
+
+    STATE_DATA_READY:
     begin
-      next_state = STATE_DATA;
-      next_count = count + 8'd1;
+      next_state = STATE_STOP;
     end
-  end
 
-  STATE_DATA_READY:
-  begin
-    next_state = STATE_STOP;
-  end
+    STATE_STOP:
+    begin
+      next_state = STATE_IDLE;
+    end
 
-  STATE_STOP:
-  begin
-    next_state = STATE_IDLE;
-  end
-
-  default:
-  begin
-    next_state = STATE_IDLE;
-  end
+    default:
+    begin
+      next_state = STATE_IDLE;
+    end
 
   endcase
 

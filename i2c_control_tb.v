@@ -12,10 +12,10 @@ module i2c_control_tb;
   reg clk;
 
   // OUTPUTS
-  wire [8:0] solar_celcius;
-  wire [8:0] greenhouse_celcius;
-  wire [8:0] ambient_celcius;
-  wire [8:0] geothermal_celcius;
+  wire signed [8:0] solar_celcius;
+  wire signed [8:0] greenhouse_celcius;
+  wire signed [8:0] ambient_celcius;
+  wire signed [8:0] geothermal_celcius;
   wire [15:0] n_lux;
   wire [15:0] e_lux;
   wire [15:0] s_lux;
@@ -38,7 +38,7 @@ module i2c_control_tb;
 
   always #2.5 clk = ~clk;
   assign pull_sda_low = ((test == TEST5 || test == TEST6) && (uut.i2c_module.state == 4 && ack_count < 1));
-   
+  
   assign uut.i2c_module.sda = pull_sda_low ? 1'b0 : 1'bz;
   
 
@@ -47,9 +47,9 @@ module i2c_control_tb;
     if(uut.i2c_module.state == 6 || uut.i2c_module.state == 8)
     begin
       ack_count = ack_count + 1;
-    
+      
     end
-    if(uut.i2c_module.state ==0) ack_count = 0;
+    if(uut.i2c_module.state == 0) ack_count = 0;
   end
   initial begin
     // INITIALIZE INPUTS

@@ -10,10 +10,10 @@
 module i2c_control (
 	input wire clk,
 	input wire rst,
-	output wire [8:0] solar_celcius,
-	output wire [8:0] greenhouse_celcius,
-	output wire [8:0] ambient_celcius,
-	output wire [8:0] geothermal_celcius,
+	output signed wire [8:0] solar_celcius,
+	output signed wire [8:0] greenhouse_celcius,
+	output signed wire [8:0] ambient_celcius,
+	output signed wire [8:0] geothermal_celcius,
 	output wire [15:0] n_lux,
 	output wire [15:0] e_lux,
 	output wire [15:0] s_lux,
@@ -42,10 +42,10 @@ reg [15:0] latched_n_lux;
 reg [15:0] latched_e_lux;
 reg [15:0] latched_s_lux;
 reg [15:0] latched_w_lux;
-reg [8:0] latched_solar_celcius; 
-reg [8:0] latched_greenhouse_celcius; 
-reg [8:0] latched_ambient_celcius; 
-reg [8:0] latched_geothermal_celcius; 
+reg signed [8:0] latched_solar_celcius; 
+reg signed [8:0] latched_greenhouse_celcius; 
+reg signed [8:0] latched_ambient_celcius; 
+reg signed [8:0] latched_geothermal_celcius; 
 reg [7:0] state;
 reg [6:0] slave_addr;
 reg start;
@@ -58,10 +58,10 @@ assign fractional = read_data[11:0];
 assign lsb_size = (16'd1 << {12'd0, exponent}) / 16'd100;
 assign calulated_lux = lsb_size * {4'd0, fractional};
 
-assign solar_celcius = latched_solar_celcius;
-assign greenhouse_celcius = latched_greenhouse_celcius;
-assign ambient_celcius = latched_ambient_celcius;
-assign geothermal_celcius = latched_geothermal_celcius;
+assign signed solar_celcius = latched_solar_celcius;
+assign signed greenhouse_celcius = latched_greenhouse_celcius;
+assign signed ambient_celcius = latched_ambient_celcius;
+assign signed geothermal_celcius = latched_geothermal_celcius;
 assign n_lux = latched_n_lux;
 assign e_lux = latched_e_lux;
 assign s_lux = latched_s_lux;
@@ -79,8 +79,8 @@ i2c i2c_module(
 	.scl(scl),
 	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
 	.ready(ready),
-        .got_acknowledge(slave_acknowledged)
-);
+	.got_acknowledge(slave_acknowledged)
+	);
 
 
 // UPDATE STATE SEQUENTIAL LOGIC
@@ -91,64 +91,64 @@ begin
 	begin
 		state <= next_state;
 		start <= next_start;
-                slave_addr <= next_slave_addr;
-	        rw <= next_rw;
-                two_bytes <= next_two_bytes;
-	        write_data <= next_write_data;
+		slave_addr <= next_slave_addr;
+		rw <= next_rw;
+		two_bytes <= next_two_bytes;
+		write_data <= next_write_data;
 		case(state)
-		STATE_SOLAR:
-		begin
-			if(ready && slave_acknowledged) latched_solar_celcius <= read_data[15:7];
-		end
-		STATE_GREENHOUSE:
-		begin
-			if(ready && slave_acknowledged) latched_greenhouse_celcius <= read_data[15:7];
-		end
-		STATE_AMBIENT:
-		begin
-			if(ready && slave_acknowledged) latched_ambient_celcius <= read_data[15:7];
-		end
-		STATE_GEOTHERMAL:
-		begin
-			if(ready && slave_acknowledged) latched_geothermal_celcius <= read_data[15:7];
-		end
-		STATE_NORTH:
-		begin
-			if(ready && slave_acknowledged) latched_n_lux <= calulated_lux;
-		end
-		STATE_EAST:
-		begin
-			if(ready && slave_acknowledged) latched_e_lux <= calulated_lux;
-		end
-		STATE_SOUTH:
-		begin
-			if(ready && slave_acknowledged) latched_s_lux <= calulated_lux;
-		end
-		STATE_WEST:
-		begin
-			if(ready && slave_acknowledged) latched_w_lux <= calulated_lux;
-		end
+			STATE_SOLAR:
+			begin
+				if(ready && slave_acknowledged) latched_solar_celcius <= read_data[15:7];
+			end
+			STATE_GREENHOUSE:
+			begin
+				if(ready && slave_acknowledged) latched_greenhouse_celcius <= read_data[15:7];
+			end
+			STATE_AMBIENT:
+			begin
+				if(ready && slave_acknowledged) latched_ambient_celcius <= read_data[15:7];
+			end
+			STATE_GEOTHERMAL:
+			begin
+				if(ready && slave_acknowledged) latched_geothermal_celcius <= read_data[15:7];
+			end
+			STATE_NORTH:
+			begin
+				if(ready && slave_acknowledged) latched_n_lux <= calulated_lux;
+			end
+			STATE_EAST:
+			begin
+				if(ready && slave_acknowledged) latched_e_lux <= calulated_lux;
+			end
+			STATE_SOUTH:
+			begin
+				if(ready && slave_acknowledged) latched_s_lux <= calulated_lux;
+			end
+			STATE_WEST:
+			begin
+				if(ready && slave_acknowledged) latched_w_lux <= calulated_lux;
+			end
 		endcase
 	end
   	else // initialize
-	begin
-		state <= STATE_IDLE;
-		write_data <= 8'd0;
-		slave_addr <= 8'd0;
-		two_bytes <= 1'd0;
+  	begin
+  		state <= STATE_IDLE;
+  		write_data <= 8'd0;
+  		slave_addr <= 8'd0;
+  		two_bytes <= 1'd0;
 // TODO: Iniztialized latched_ values with 0's
-                latched_solar_celcius [8:0] <= 9'd0;
-                latched_greenhouse_celcius [8:0] <= 9'd0;
-                latched_ambient_celcius [8:0] <= 9'd0;
-                latched_geothermal_celcius [8:0] <= 9'd0;
-                latched_n_lux [15:0] <= 16'd0;
-                latched_e_lux [15:0] <= 16'd0;
-                latched_s_lux [15:0] <= 16'd0;
-                latched_w_lux [15:0] <= 16'd0;
-		rw <= 1'd0;
-		start <= 1'd0;
-		initialized <= 1'd1;
-	end
+latched_solar_celcius [8:0] <= 9'sd0;
+latched_greenhouse_celcius [8:0] <= 9'sd0;
+latched_ambient_celcius [8:0] <= 9'sd0;
+latched_geothermal_celcius [8:0] <= 9'sd0;
+latched_n_lux [15:0] <= 16'd0;
+latched_e_lux [15:0] <= 16'd0;
+latched_s_lux [15:0] <= 16'd0;
+latched_w_lux [15:0] <= 16'd0;
+rw <= 1'd0;
+start <= 1'd0;
+initialized <= 1'd1;
+end
 end
 
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
@@ -159,209 +159,209 @@ begin
 	next_rw = 1'd0;
 	next_two_bytes = 1'd0;
 	next_write_data = 8'd0; // We never write 
-        next_state = STATE_IDLE;
+	next_state = STATE_IDLE;
 	case(state)
-	STATE_IDLE:
-	begin
-		if(ready)
-		begin 
-			next_state = STATE_IDLE_BUFFER;
-			next_slave_addr = `SOLAR_ADDR;
-			next_start = 1'd1;
-		end
-		else 
+		STATE_IDLE:
 		begin
-			next_state = STATE_IDLE;
-		end
+			if(ready)
+			begin 
+				next_state = STATE_IDLE_BUFFER;
+				next_slave_addr = `SOLAR_ADDR;
+				next_start = 1'd1;
+			end
+			else 
+			begin
+				next_state = STATE_IDLE;
+			end
 		next_rw = 1'd1; // Reading from device
 		next_two_bytes = 1'd1;
 	end
-        STATE_IDLE_BUFFER:
-        begin
-               next_state = STATE_SOLAR;
-	       next_slave_addr = `SOLAR_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_SOLAR:
+	STATE_IDLE_BUFFER:
 	begin
-		if(ready) 
-		begin 
-			next_state = STATE_SOLAR_BUFFER;
-			next_slave_addr = `GREENHOUSE_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin
-			next_state = STATE_SOLAR;
-			next_slave_addr = `SOLAR_ADDR;
-		end
+		next_state = STATE_SOLAR;
+		next_slave_addr = `SOLAR_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_SOLAR:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_SOLAR_BUFFER;
+	   		next_slave_addr = `GREENHOUSE_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin
+	   		next_state = STATE_SOLAR;
+	   		next_slave_addr = `SOLAR_ADDR;
+	   	end
 		next_rw = 1'd1; // Reading from device
 		next_two_bytes = 1'd1;
 	end
-        STATE_SOLAR_BUFFER:
-        begin
-               next_state = STATE_GREENHOUSE;
-	       next_slave_addr = `GREENHOUSE_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_GREENHOUSE:
+	STATE_SOLAR_BUFFER:
 	begin
-		if(ready) 
-		begin 
-			next_state = STATE_GREENHOUSE_BUFFER;
-			next_slave_addr = `AMBIENT_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin
-			next_state = STATE_GREENHOUSE;
-			next_slave_addr = `GREENHOUSE_ADDR;
-		end
+		next_state = STATE_GREENHOUSE;
+		next_slave_addr = `GREENHOUSE_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_GREENHOUSE:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_GREENHOUSE_BUFFER;
+	   		next_slave_addr = `AMBIENT_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin
+	   		next_state = STATE_GREENHOUSE;
+	   		next_slave_addr = `GREENHOUSE_ADDR;
+	   	end
 		next_rw = 1'd1; // Reading from device
 		next_two_bytes = 1'd1;
 	end
-        STATE_GREENHOUSE_BUFFER:
-        begin
-               next_state = STATE_AMBIENT;
-	       next_slave_addr = `AMBIENT_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_AMBIENT:
+	STATE_GREENHOUSE_BUFFER:
 	begin
-		
-		if(ready) 
-		begin 
-			next_state = STATE_AMBIENT_BUFFER;
-			next_slave_addr = `GEOTHERMAL_ADDR;
-			next_start = 1'd1;
-		end
-		else
-		begin
-			next_state = STATE_AMBIENT;
-			next_slave_addr = `AMBIENT_ADDR;
-		end
-		next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-	end
-        STATE_AMBIENT_BUFFER:
-        begin
-               next_state = STATE_GEOTHERMAL;
-	       next_slave_addr = `GEOTHERMAL_ADDR;
+		next_state = STATE_AMBIENT;
+		next_slave_addr = `AMBIENT_ADDR;
 	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_GEOTHERMAL:
-	begin
-		if(ready) 
-		begin 
-			next_state = STATE_GEOTHERMAL_BUFFER;
-			next_slave_addr = `NORTH_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin 
-			next_state = STATE_GEOTHERMAL;
-			next_slave_addr = `GEOTHERMAL_ADDR;
-		end
-		next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-	end
-        STATE_GEOTHERMAL_BUFFER:
-        begin
-               next_state = STATE_NORTH;
-	       next_slave_addr = `NORTH_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_NORTH:
-	begin
-		if(ready) 
-		begin 
-			next_state = STATE_NORTH_BUFFER;
-			next_slave_addr = `EAST_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin	
-			next_state = STATE_NORTH;
-			next_slave_addr = `NORTH_ADDR;
-		end
-		next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-	end
-        STATE_NORTH_BUFFER:
-        begin
-               next_state = STATE_EAST;
-	       next_slave_addr = `EAST_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_EAST:
-	begin
-		if(ready) 
-		begin 
-			next_state = STATE_EAST_BUFFER;
-			next_slave_addr = `SOUTH_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin
-			next_state = STATE_EAST;
-			next_slave_addr = `EAST_ADDR;
-		end
-		next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-	end
-        STATE_EAST_BUFFER:
-        begin
-               next_state = STATE_SOUTH;
-	       next_slave_addr = `SOUTH_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_SOUTH:
-	begin
-		if(ready) 
-		begin 
-			next_state = STATE_SOUTH_BUFFER;
-			next_slave_addr = `WEST_ADDR;
-			next_start = 1'd1;
-		end
-		else 
-		begin	
-			next_state = STATE_SOUTH;
-			next_slave_addr = `SOUTH_ADDR;
-		end
-		next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-	end
-        STATE_SOUTH_BUFFER:
-        begin
-               next_state = STATE_WEST;
-	       next_slave_addr = `WEST_ADDR;
-	       next_rw = 1'd1; // Reading from device
-		next_two_bytes = 1'd1;
-        end
-	STATE_WEST:
-	begin
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_AMBIENT:
+	   begin
 
-		if(ready) 
-		begin 
-			next_state = STATE_WEST_BUFFER;
-		end
-		else 
-		begin	
-			next_state = STATE_WEST;
-			next_slave_addr = `WEST_ADDR;
-		end 
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_AMBIENT_BUFFER;
+	   		next_slave_addr = `GEOTHERMAL_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else
+	   	begin
+	   		next_state = STATE_AMBIENT;
+	   		next_slave_addr = `AMBIENT_ADDR;
+	   	end
+		next_rw = 1'd1; // Reading from device
+		next_two_bytes = 1'd1;
 	end
-        STATE_WEST_BUFFER:
-        begin
-               next_state = STATE_IDLE;
-        end
+	STATE_AMBIENT_BUFFER:
+	begin
+		next_state = STATE_GEOTHERMAL;
+		next_slave_addr = `GEOTHERMAL_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_GEOTHERMAL:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_GEOTHERMAL_BUFFER;
+	   		next_slave_addr = `NORTH_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin 
+	   		next_state = STATE_GEOTHERMAL;
+	   		next_slave_addr = `GEOTHERMAL_ADDR;
+	   	end
+		next_rw = 1'd1; // Reading from device
+		next_two_bytes = 1'd1;
+	end
+	STATE_GEOTHERMAL_BUFFER:
+	begin
+		next_state = STATE_NORTH;
+		next_slave_addr = `NORTH_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_NORTH:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_NORTH_BUFFER;
+	   		next_slave_addr = `EAST_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin	
+	   		next_state = STATE_NORTH;
+	   		next_slave_addr = `NORTH_ADDR;
+	   	end
+		next_rw = 1'd1; // Reading from device
+		next_two_bytes = 1'd1;
+	end
+	STATE_NORTH_BUFFER:
+	begin
+		next_state = STATE_EAST;
+		next_slave_addr = `EAST_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_EAST:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_EAST_BUFFER;
+	   		next_slave_addr = `SOUTH_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin
+	   		next_state = STATE_EAST;
+	   		next_slave_addr = `EAST_ADDR;
+	   	end
+		next_rw = 1'd1; // Reading from device
+		next_two_bytes = 1'd1;
+	end
+	STATE_EAST_BUFFER:
+	begin
+		next_state = STATE_SOUTH;
+		next_slave_addr = `SOUTH_ADDR;
+	       next_rw = 1'd1; // Reading from device
+	       next_two_bytes = 1'd1;
+	   end
+	   STATE_SOUTH:
+	   begin
+	   	if(ready) 
+	   	begin 
+	   		next_state = STATE_SOUTH_BUFFER;
+	   		next_slave_addr = `WEST_ADDR;
+	   		next_start = 1'd1;
+	   	end
+	   	else 
+	   	begin	
+	   		next_state = STATE_SOUTH;
+	   		next_slave_addr = `SOUTH_ADDR;
+	   	end
+		next_rw = 1'd1; // Reading from device
+		next_two_bytes = 1'd1;
+	end
+	STATE_SOUTH_BUFFER:
+	begin
+		next_state = STATE_WEST;
+		next_slave_addr = `WEST_ADDR;
+	      next_rw = 1'd1; // Reading from device
+	      next_two_bytes = 1'd1;
+	  end
+	  STATE_WEST:
+	  begin
+
+	  	if(ready) 
+	  	begin 
+	  		next_state = STATE_WEST_BUFFER;
+	  	end
+	  	else 
+	  	begin	
+	  		next_state = STATE_WEST;
+	  		next_slave_addr = `WEST_ADDR;
+	  	end 
+	  end
+	  STATE_WEST_BUFFER:
+	  begin
+	  	next_state = STATE_IDLE;
+	  end
 	endcase
 end
 endmodule 

@@ -35,14 +35,14 @@ wire [7:0] data_rx;
 wire [7:0] data_tx;
 
 assign solar_th = actual_solar_th;
-assign solar_cooldown_th = actual_solar_cooldown_th;
-assign solar_heatup_th = actual_solar_heatup_th;
-assign greenhouse_cooldown_th = actual_greenhouse_cooldown_th;
-assign greenhouse_heatup_th = actual_greenhouse_heatup_th;
-assign ambient_cooldown_th = actual_ambient_cooldown_th;
-assign ambient_heatup_th = actual_ambient_heatup_th;
-assign geothermal_cooldown_th = actual_geothermal_cooldown_th;
-assign geothermal_heatup_th = actual_geothermal_heatup_th;
+assign signed solar_cooldown_th = actual_solar_cooldown_th;
+assign signed solar_heatup_th = actual_solar_heatup_th;
+assign signed greenhouse_cooldown_th = actual_greenhouse_cooldown_th;
+assign signed greenhouse_heatup_th = actual_greenhouse_heatup_th;
+assign signed ambient_cooldown_th = actual_ambient_cooldown_th;
+assign signed ambient_heatup_th = actual_ambient_heatup_th;
+assign signed geothermal_cooldown_th = actual_geothermal_cooldown_th;
+assign signed geothermal_heatup_th = actual_geothermal_heatup_th;
 assign start_tx = latched_start_tx;
 assign data_tx = latched_data_tx;
 

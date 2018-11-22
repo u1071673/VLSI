@@ -3,7 +3,7 @@ module control_tb;
   // INPUTS (reg)
   reg clk;
   reg rst;
-  reg [7:0] gt;
+  reg signed [7:0] gt;
   reg t_g_gt;
 
   // OUTPUTS (wire)

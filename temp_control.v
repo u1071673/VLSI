@@ -1,9 +1,9 @@
-`define TH 8'd5
+`define TH 8'sd5
 
 module temp_control (
 input wire [7:0] cooldown_th, /* set only to value between 90-120 (default 95) */
 input wire [7:0] heatup_th, /* set only to value between 10-80  (default 60) */
-input wire [7:0] greenhouse_temp,
+input wire signed [7:0] greenhouse_temp,
 input wire clk,
 input wire rst,
 input wire temp_g_greenhouse_temp,
@@ -13,13 +13,13 @@ output wire out
 localparam [1:0] STATE_IDLE = 2'd0, STATE_COOLDOWN = 2'd1, STATE_HEATUP = 2'd2;
 reg [1:0] state, next_state;
 reg initialized;
-wire hot_to_idle_th;
-wire cold_to_idle_th;
+wire signed hot_to_idle_th;
+wire signed cold_to_idle_th;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign out = (state == STATE_COOLDOWN && greenhouse_temp > hot_to_idle_th && (!temp_g_greenhouse_temp)) || (state == STATE_HEATUP && greenhouse_temp < cold_to_idle_th && temp_g_greenhouse_temp);
-assign hot_to_idle_th = cooldown_th - `TH;
-assign cold_to_idle_th = heatup_th + `TH;
+assign signed hot_to_idle_th = cooldown_th - `TH;
+assign signed cold_to_idle_th = heatup_th + `TH;
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)

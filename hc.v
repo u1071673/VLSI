@@ -1,9 +1,9 @@
-`define TH 8'd5
+`define TH 8'sd5
 
 module hc(
 	input wire clk,
 	input wire rst,
-	input wire [7:0] ts1, ts2,
+	input wire signed [7:0] ts1, ts2,
 	output wire out
 	);
 
@@ -27,14 +27,14 @@ begin
 	case(state)
 		STATE_2GE1:
 		begin
-			if(ts1 > 8'd0 && ts2 > 8'd0)
-			begin
-				if(ts2 < (ts1 - `TH)) next_state = STATE_1G2;
-				else next_state = STATE_2GE1;
-			end
+			if(ts2 < (ts1 - `TH)) next_state = STATE_1G2;
+			else next_state = STATE_2GE1;
 		end
 		STATE_1G2 : 
-		if(ts1 < (ts2 - `TH)) next_state = STATE_2GE1;
+		begin
+			if(ts1 < (ts2 - `TH)) next_state = STATE_2GE1;
+			else next_state = STATE_1G2;
+		end
 		default:
 		next_state = STATE_2GE1;
 	endcase

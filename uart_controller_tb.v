@@ -11,45 +11,46 @@ module uart_controller_tb;
 
   // OUTPUTS
   wire [15:0] solar_th;
-  wire [7:0] solar_cooldown_th;
-  wire [7:0] solar_heatup_th;
-  wire [7:0] greenhouse_cooldown_th;
-  wire [7:0] greenhouse_heatup_th;
-  wire [7:0] ambient_cooldown_th;
-  wire [7:0] ambient_heatup_th;
-  wire [7:0] geothermal_cooldown_th;
-  wire [7:0] geothermal_heatup_th;
+  wire signed [7:0] solar_cooldown_th;
+  wire signed [7:0] solar_heatup_th;
+  wire signed [7:0] greenhouse_cooldown_th;
+  wire signed [7:0] greenhouse_heatup_th;
+  wire signed [7:0] ambient_cooldown_th;
+  wire signed [7:0] ambient_heatup_th;
+  wire signed [7:0] geothermal_cooldown_th;
+  wire signed [7:0] geothermal_heatup_th;
   wire tx;
   wire test_tx;
   wire idle_ready_tx;
-assign start = test_start;
+  
+  assign start = test_start;
 
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
-uart_tx uut_tx(
+  uart_tx uut_tx(
     .clk(clk),
     .rst(rst),
     .start(start),
     .data(data_tx),
     .tx(test_tx),
     .idle_ready(idle_ready_tx)
-);
+    );
 
-uart_controller uut(
-  .clk(clk),
-  .rst(rst),
-  .rx(test_tx),
-  .solar_th(solar_th),
-  .solar_cooldown_th(solar_cooldown_th),
-  .solar_heatup_th(solar_heatup_th),
-  .greenhouse_cooldown_th(greenhouse_cooldown_th),
-  .greenhouse_heatup_th(greenhouse_heatup_th),
-  .ambient_cooldown_th(ambient_cooldown_th),
-  .ambient_heatup_th(ambient_heatup_th),
-  .geothermal_cooldown_th(geothermal_cooldown_th),
-  .geothermal_heatup_th(geothermal_heatup_th),
-  .tx(tx)
-  );
+  uart_controller uut(
+    .clk(clk),
+    .rst(rst),
+    .rx(test_tx),
+    .solar_th(solar_th),
+    .solar_cooldown_th(solar_cooldown_th),
+    .solar_heatup_th(solar_heatup_th),
+    .greenhouse_cooldown_th(greenhouse_cooldown_th),
+    .greenhouse_heatup_th(greenhouse_heatup_th),
+    .ambient_cooldown_th(ambient_cooldown_th),
+    .ambient_heatup_th(ambient_heatup_th),
+    .geothermal_cooldown_th(geothermal_cooldown_th),
+    .geothermal_heatup_th(geothermal_heatup_th),
+    .tx(tx)
+    );
 
   always #2.5 clk = ~clk;
 

@@ -6,7 +6,7 @@ module hc_tb;
   // INPUTS (reg)
   reg clk;
   reg rst;
-  reg [7:0] ts1, ts2;
+  reg signed [7:0] ts1, ts2;
 
   // OUTPUTS (wire)
   wire out;
