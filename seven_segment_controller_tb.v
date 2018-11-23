@@ -4,27 +4,40 @@ module seven_segment_controller_tb;
   reg [3:0] test; 
 
   // INPUTS (reg)
-  reg [15:0] binary;
-  reg clk, rst;
-
+  reg clk;
+  reg rst;
+  reg signed [7:0] binary;
+ 
   // OUTPUTS (wire)
-  wire sign;
-  wire [3:0] hundreds;
-  wire [3:0] tens;
-  wire [3:0] ones;
-  wire data_ready;
+  wire anode0_en;
+  wire anode1_en;
+  wire anode2_en;
+  wire anode3_en;
+  wire a_out;
+  wire b_out;
+  wire c_out;
+  wire d_out;
+  wire e_out;
+  wire f_out;
+  wire g_out;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
-  bcd #(.N(16)) uut(
-    .clk(clk),
-    .rst(rst),
-    .binary(binary),
-    .sign(sign),
-    .hundreds(hundreds),
-    .tens(tens),
-    .ones(ones),
-    .data_ready(data_ready)
-    );
+seven_segment_controller uut(
+  .clk(clk),
+  .rst(rst),
+  .binary(binary), /* Value to display on all segments */
+  .anode0_en(anode0_en),
+  .anode1_en(anode1_en),
+  .anode2_en(anode2_en),
+  .anode3_en(anode3_en),
+  .a_out(a_out),
+  .b_out(b_out),
+  .c_out(c_out),
+  .d_out(d_out),
+  .e_out(e_out),
+  .f_out(f_out),
+  .g_out(g_out)
+  );
 
   always #2.5 clk = ~clk;
 

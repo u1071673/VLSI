@@ -3,10 +3,10 @@ module seven_segment_controller (
 	input clk,
 	input rst,
 	input signed [7:0] binary, /* Value to display on all segments */
-	output seg0_en,
-	output seg1_en,
-	output seg2_en,
-	output seg3_en,
+	output anode0_en,
+	output anode1_en,
+	output anode2_en,
+	output anode3_en,
 	output a_out,
 	output b_out,
 	output c_out,
@@ -39,10 +39,10 @@ wire sign;
 wire bcd_ready;
 
 
-assign seg0 = latched_anode0_en;
-assign seg1 = latched_anode1_en;
-assign seg2 = latched_anode2_en;
-assign seg3 = latched_anode3_en;
+assign anode0_en = latched_anode0_en;
+assign anode1_en = latched_anode1_en;
+assign anode2_en = latched_anode2_en;
+assign anode3_en = latched_anode3_en;
 
 assign bcd_to_display = latched_bcd;
 
