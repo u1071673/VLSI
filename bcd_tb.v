@@ -32,16 +32,18 @@ module bcd_tb;
     // INITIALIZE INPUTS
     clk = 0;
     rst = 0;
-    binary = 162;
+    binary = 0;
 
     // WAIT 100ns FOR GLOBAL RESET TO FINISH
-    #10;
+    #100;
     // ADD STIMULUS HERE
     test = TEST1;
-    #10;
+    binary = 123;
+    #100;
 
     test = TEST2;
-    #10;
+    binary = 38;
+    #100;
 
     #100;
 

@@ -13,11 +13,12 @@ module bcd(
 localparam [3:0] STATE_START = 3'd0, STATE_WORK = 3'd1, STATE_READY = 3'd2;
 
 reg [7:0] latched_binary;
-reg [3:0] state, next_state, 
+reg [3:0] state, next_state;
 reg [3:0] count, next_count;
 reg [3:0] h, next_h;
 reg [3:0] t, next_t;
 reg [3:0] o, next_o;
+reg initialized;
 
 wire [7:0] abs_binary;
 
@@ -83,7 +84,7 @@ begin
 				next_t = next_t << 1;
 				next_t[0] = next_o[3];
 				next_o = next_o << 1;
-				next_o[0] = next_b[next_count];
+				next_o[0] = latched_binary[next_count];
 			end
 		end
 		STATE_READY:
