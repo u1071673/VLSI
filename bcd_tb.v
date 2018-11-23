@@ -15,7 +15,7 @@ module bcd_tb;
   wire data_ready;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
-  bcd uut(
+  bcd #(16) uut(
     .clk(clk),
     .rst(rst),
     .binary(binary),
@@ -25,7 +25,6 @@ module bcd_tb;
     .ones(ones),
     .data_ready(data_ready)
     );
-  defparam uut.N = 16;
 
   always #2.5 clk = ~clk;
 
