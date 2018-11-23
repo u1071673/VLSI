@@ -25,6 +25,8 @@ module i2c_control (
 localparam [7:0] STATE_IDLE = 8'd0, STATE_IDLE_BUFFER = 8'd1, STATE_SOLAR = 8'd2, STATE_SOLAR_BUFFER = 8'd3, STATE_GREENHOUSE = 8'd4, STATE_GREENHOUSE_BUFFER = 8'd5, STATE_AMBIENT = 8'd6, STATE_AMBIENT_BUFFER = 8'd7, STATE_GEOTHERMAL = 8'd8, STATE_GEOTHERMAL_BUFFER = 8'd9, STATE_NORTH = 8'd10, STATE_NORTH_BUFFER = 8'd11, STATE_EAST = 8'd12, STATE_EAST_BUFFER = 8'd13, STATE_SOUTH = 8'd14, STATE_SOUTH_BUFFER = 8'd15, STATE_WEST = 8'd16, STATE_WEST_BUFFER = 8'd17;
 
 wire [15:0] read_data;
+wire ready;
+wire [15:0] calulated_lux;
 wire [15:0] lsb_size;
 wire [11:0] fractional;
 wire [3:0] exponent;
