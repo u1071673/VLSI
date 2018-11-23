@@ -29,6 +29,9 @@ reg initialized, latched_start_tx, next_start_tx;
 
 wire [7:0] data_rx;
 wire [7:0] data_tx;
+wire start_tx;
+wire idle_ready_tx;
+wire data_ready_rx;
 
 assign solar_th = actual_solar_th;
 assign solar_cooldown_th = actual_solar_cooldown_th;
