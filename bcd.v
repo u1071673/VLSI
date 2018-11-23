@@ -2,19 +2,20 @@
 module bcd(
 	input wire clk,
 	input wire rst,
-	input wire signed [7:0] binary,
+	input wire signed [N-1:0] binary,
 	output wire sign,
 	output wire [3:0] hundreds,
 	output wire [3:0] tens,
 	output wire [3:0] ones,
 	output wire data_ready
 );
+parameter N = 8;
 
 localparam [3:0] STATE_START = 3'd0, STATE_WORK = 3'd1, STATE_READY = 3'd2;
 
-reg [7:0] latched_binary;
+reg [N-1:0] latched_binary;
 reg [3:0] state, next_state;
-reg [3:0] count, next_count;
+reg [4:0] count, next_count;
 reg [3:0] h, next_h;
 reg [3:0] t, next_t;
 reg [3:0] o, next_o;
@@ -45,7 +46,7 @@ begin
 	else 
 	begin
 		state <= STATE_START;
-		count <= 4'd0;
+		count <= 5'd0;
 		h <= 4'd0;
 		t <= 4'd0;
 		o <= 4'd0;
@@ -60,23 +61,23 @@ begin
 		STATE_START:
 		begin
 			next_state = STATE_WORK;
-			next_count = 4'd8;
+			next_count = 5'dN;
 			next_h = 4'd0;
 			next_t = 4'd0;
 			next_o = 4'd0;
 		end
 		STATE_WORK:
 		begin
-			if(next_count == 4'd0) next_state = STATE_READY;
+			if(next_count == 5'd0) next_state = STATE_READY;
 			else 
 			begin
 				next_state = STATE_WORK;
-				next_count = count - 4'd1;
-				if(h >= 5) next_h = h + 3;
+				next_count = count - 5'd1;
+				if(h >= 4'd5) next_h = h + 3;
 				else next_h = h;
-				if(t >= 5) next_t = t + 3;
+				if(t >= 4'd5) next_t = t + 3;
 				else next_t = t;
-				if(o >= 5) next_o = o + 3;
+				if(o >= 4'd5) next_o = o + 3;
 				else next_o = o;
 
 				next_h = next_h << 1;
@@ -91,7 +92,7 @@ begin
 		begin
 			if(latched_binary != binary) next_state = STATE_START;
 			else next_state = STATE_READY;
-			next_count = 4'd0;
+			next_count = 5'd0;
 			next_h = h;
 			next_t = t;
 			next_o = o;
@@ -99,7 +100,7 @@ begin
 		default:
 		begin
 			next_state = STATE_START;
-			next_count = 4'd0;
+			next_count = 5'd0;
 			next_h = 4'd0;
 			next_t = 4'd0;
 			next_o = 4'd0;

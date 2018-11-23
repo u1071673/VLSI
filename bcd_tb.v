@@ -25,6 +25,7 @@ module bcd_tb;
     .ones(ones),
     .data_ready(data_ready)
     );
+  defparam uut.N = 16;
 
   always #2.5 clk = ~clk;
 
