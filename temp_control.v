@@ -18,8 +18,8 @@ wire signed cold_to_idle_th;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign out = (state == STATE_COOLDOWN && greenhouse_temp > hot_to_idle_th && (!temp_g_greenhouse_temp)) || (state == STATE_HEATUP && greenhouse_temp < cold_to_idle_th && temp_g_greenhouse_temp);
-assign signed hot_to_idle_th = cooldown_th - `TH;
-assign signed cold_to_idle_th = heatup_th + `TH;
+assign hot_to_idle_th = cooldown_th - `TH;
+assign cold_to_idle_th = heatup_th + `TH;
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)

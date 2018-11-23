@@ -12,10 +12,10 @@ module i2c_control (
 	input wire rst,
 	inout wire sda,
 	inout wire scl,
-	output signed wire [8:0] solar_celcius,
-	output signed wire [8:0] greenhouse_celcius,
-	output signed wire [8:0] ambient_celcius,
-	output signed wire [8:0] geothermal_celcius,
+	output wire signed [8:0] solar_celcius,
+	output wire signed [8:0] greenhouse_celcius,
+	output wire signed [8:0] ambient_celcius,
+	output wire signed [8:0] geothermal_celcius,
 	output wire [15:0] n_lux,
 	output wire [15:0] e_lux,
 	output wire [15:0] s_lux,
@@ -28,8 +28,6 @@ wire [15:0] read_data;
 wire [15:0] lsb_size;
 wire [11:0] fractional;
 wire [3:0] exponent;
-wire sda;
-wire scl;
 wire slave_acknowledged;
 
 reg [15:0] next_write_data;
@@ -60,10 +58,10 @@ assign fractional = read_data[11:0];
 assign lsb_size = (16'd1 << {12'd0, exponent}) / 16'd100;
 assign calulated_lux = lsb_size * {4'd0, fractional};
 
-assign signed solar_celcius = latched_solar_celcius;
-assign signed greenhouse_celcius = latched_greenhouse_celcius;
-assign signed ambient_celcius = latched_ambient_celcius;
-assign signed geothermal_celcius = latched_geothermal_celcius;
+assign solar_celcius = latched_solar_celcius;
+assign greenhouse_celcius = latched_greenhouse_celcius;
+assign ambient_celcius = latched_ambient_celcius;
+assign geothermal_celcius = latched_geothermal_celcius;
 assign n_lux = latched_n_lux;
 assign e_lux = latched_e_lux;
 assign s_lux = latched_s_lux;
