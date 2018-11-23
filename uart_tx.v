@@ -18,7 +18,7 @@ assign idle_ready = (state == STATE_IDLE) && !(rst);
 assign tx = bit;
 
 // UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
+always@(posedge clk or posedge rst)
 begin
   if(rst)
   begin

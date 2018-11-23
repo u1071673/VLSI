@@ -16,7 +16,7 @@ assign data_ready = (state == STATE_DATA_READY);
 assign data = latched_data;
 
 //UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
+always@(posedge clk or posedge rst)
 begin
   if(rst)
   begin

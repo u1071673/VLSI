@@ -22,7 +22,7 @@ assign stop_cooldown_th = cooldown_th - `TH;
 assign stop_heatup_th = heatup_th + `TH;
 
 // UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
+always@(posedge clk or posedge rst)
 begin
 	if(rst) initialized <= 1'd0;
 	else if(initialized) state <= next_state;

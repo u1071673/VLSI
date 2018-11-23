@@ -84,7 +84,7 @@ i2c i2c_module(
 
 
 // UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
+always@(posedge clk or posedge rst)
 begin
 	if(rst) initialized <= 1'd0;
 	else if (initialized)

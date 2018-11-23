@@ -15,7 +15,7 @@ reg [1:0] state, next_state;
 assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output high.
 
 // UPDATE STATE SEQUENTIAL LOGIC
-always@(posedge clk)
+always@(posedge clk or posedge rst)
 begin
 	if(rst) state = STATE_2GE1;
 	else state = next_state;
