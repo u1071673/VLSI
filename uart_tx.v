@@ -20,7 +20,7 @@ assign tx = bit;
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk)
 begin
-  if(rst) // TODO: verify
+  if(rst)
   begin
     initialized <= 1'd0;
     bit <= 1'd1;

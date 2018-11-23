@@ -34,8 +34,6 @@ wire [7:0] geothermal_celcius;
 wire ambient_g_greenhouse_temp;
 wire geothermal_g_greenhouse_temp;
 wire solar_g_greenhouse_temp;
-wire rx;
-wire tx;
 wire i2c_clk;
 wire uart_clk;
 
@@ -69,7 +67,7 @@ i2c_control i2c_control_module(
 	);
 
 uart uart_module(
-	.clk(uart_clk)
+	.clk(uart_clk),
 	.rst(rst),
 	.rx(rx),
 	.tx(tx),
@@ -144,7 +142,7 @@ hc hc_solarheater(
 	.out(solar_g_greenhouse_temp)
 	);
 
-temp_control temp_control_geothermal(
+temp_control temp_control_solarheater(
 	.clk(clk),
 	.rst(rst),
 	.cooldown_th(solar_cooldown_th),
