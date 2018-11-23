@@ -51,10 +51,10 @@ begin
 			else if(lsw > lse_th) next_state = STATE_MW;
 			else next_state = STATE_IDLE;
 		end
-		STATE_MN: if(lsn_th < lss) next_state = STATE_IDLE;
-		STATE_ME: if(lse_th < lsw) next_state = STATE_IDLE;
-		STATE_MS: if(lss_th < lsn) next_state = STATE_IDLE;
-		STATE_MW: if(lsw_th < lse) next_state = STATE_IDLE;
+		STATE_MN: if(lsn < lss) next_state = STATE_IDLE;
+		STATE_ME: if(lse < lsw) next_state = STATE_IDLE;
+		STATE_MS: if(lss < lsn) next_state = STATE_IDLE;
+		STATE_MW: if(lsw < lse) next_state = STATE_IDLE;
 		default
 		begin
 			next_state = STATE_IDLE;
