@@ -1,11 +1,13 @@
 
 module bcd(
+	input wire clk,
+	input wire rst,
 	input wire signed [7:0] binary,
-	output wire sign;
+	output wire sign,
 	output wire [3:0] hundreds,
 	output wire [3:0] tens,
 	output wire [3:0] ones,
-	output wire data_ready;
+	output wire data_ready
 );
 
 localparam [3:0] STATE_START = 3'd0, STATE_WORK = 3'd1, STATE_READY = 3'd2;
@@ -30,7 +32,7 @@ assign data_ready = state == STATE_READY;
 always@(posedge clk)
 begin
 	if(rst) initialized <= 1'd0;
-	else if(initialized) 
+	else if(initialized)
 	begin
 		state <= next_state;
 		count <= next_count;
