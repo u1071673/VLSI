@@ -4,7 +4,7 @@ module bcd_tb;
   reg [3:0] test; 
 
   // INPUTS (reg)
-  reg [7:0] binary;
+  reg [15:0] binary;
   reg clk, rst;
 
   // OUTPUTS (wire)
@@ -15,7 +15,7 @@ module bcd_tb;
   wire data_ready;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
-  bcd #(16) uut(
+  bcd #(.N(16)) uut(
     .clk(clk),
     .rst(rst),
     .binary(binary),
@@ -38,11 +38,11 @@ module bcd_tb;
     #100;
     // ADD STIMULUS HERE
     test = TEST1;
-    binary = 123;
+    binary = -16'd162;
     #100;
 
     test = TEST2;
-    binary = 38;
+    binary = 16'd38;
     #100;
 
     #100;

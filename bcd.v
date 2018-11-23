@@ -1,5 +1,9 @@
 
-module bcd(
+module bcd 
+#(
+parameter N = 8
+)
+(
 	input wire clk,
 	input wire rst,
 	input wire signed [N-1:0] binary,
@@ -9,7 +13,6 @@ module bcd(
 	output wire [3:0] ones,
 	output wire data_ready
 );
-parameter N = 8;
 
 localparam [3:0] STATE_START = 3'd0, STATE_WORK = 3'd1, STATE_READY = 3'd2;
 
@@ -21,10 +24,10 @@ reg [3:0] t, next_t;
 reg [3:0] o, next_o;
 reg initialized;
 
-wire [7:0] abs_binary;
+wire [N-1:0] abs_binary;
 
-assign sign = latched_binary < 8'sd0;
-assign abs_binary = sign ? ~latched_binary + 8'b1 : latched_binary; // Get absolute value of binary
+assign sign = latched_binary[N-1];
+assign abs_binary = sign ? ~latched_binary + {{(N-1){1'b0}},1'b1} : latched_binary; // Get absolute value of binary
 assign hundreds = h;
 assign tens = t;
 assign ones = o;
@@ -47,6 +50,7 @@ begin
 	begin
 		state <= STATE_START;
 		count <= 5'd0;
+		latched_binary <= {N{1'b0}};
 		h <= 4'd0;
 		t <= 4'd0;
 		o <= 4'd0;
@@ -61,7 +65,7 @@ begin
 		STATE_START:
 		begin
 			next_state = STATE_WORK;
-			next_count = 5'dN;
+			next_count = N;
 			next_h = 4'd0;
 			next_t = 4'd0;
 			next_o = 4'd0;
@@ -85,7 +89,7 @@ begin
 				next_t = next_t << 1;
 				next_t[0] = next_o[3];
 				next_o = next_o << 1;
-				next_o[0] = latched_binary[next_count];
+				next_o[0] = abs_binary[next_count];
 			end
 		end
 		STATE_READY:
