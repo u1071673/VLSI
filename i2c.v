@@ -23,7 +23,7 @@ reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
 reg initialized;
 reg slave_acknowledged;
 
-wire sda_and_scl_high = (sda === 1'bz || sda == 1'b1) && (scl === 1'bz || scl == 1'b1);
+wire sda_and_scl_high = (sda === 1'bz) && (scl === 1'bz);
   
 // OUTPUT COMBINATIONAL LOGIC
 assign sda = sda_enable ? 1'b0 : 1'bz;
@@ -62,7 +62,7 @@ begin
       STATE_R_MSBYTE, STATE_R_LSBYTE:
       begin
         slave_acknowledged <= 1'b1;
-        latched_data[count] <= (sda === 1'bz) || (sda == 1'b1);
+        latched_data[count] <= (sda === 1'bz);
       end
       STATE_MASTER_WACK:
       begin
@@ -137,7 +137,7 @@ begin
   STATE_SLAVE_WACK: // slave pulls sda low for ack.
   begin
     next_scl_enable = 1'b1;
-    if(sda === 1'bz || sda === 1'b1) // ~ACK
+    if(sda === 1'bz) // ~ACK
     begin
       next_state = STATE_STOP1;
       next_sda_enable = 1'b1;

@@ -39,7 +39,6 @@ begin
 		next_state = STATE_2GE1;
 	endcase
 
-
 end
 
 endmodule

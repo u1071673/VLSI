@@ -12,10 +12,10 @@ module i2c_control_tb;
   reg clk;
 
   // OUTPUTS
-  wire signed [8:0] solar_celcius;
-  wire signed [8:0] greenhouse_celcius;
-  wire signed [8:0] ambient_celcius;
-  wire signed [8:0] geothermal_celcius;
+  wire signed [7:0] solar_celcius;
+  wire signed [7:0] greenhouse_celcius;
+  wire signed [7:0] ambient_celcius;
+  wire signed [7:0] geothermal_celcius;
   wire [15:0] n_lux;
   wire [15:0] e_lux;
   wire [15:0] s_lux;
