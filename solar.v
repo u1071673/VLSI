@@ -55,7 +55,7 @@ begin
 		STATE_ME: if(lse < lsw) next_state = STATE_IDLE;
 		STATE_MS: if(lss < lsn) next_state = STATE_IDLE;
 		STATE_MW: if(lsw < lse) next_state = STATE_IDLE;
-		default
+		default:
 		begin
 			next_state = STATE_IDLE;
 		end
