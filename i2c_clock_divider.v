@@ -1,5 +1,5 @@
-`define WIDTH 63
-`define N (`WIDTH'd125)
+`define WIDTH_i2c 63
+`define N_i2c (`WIDTH_i2c'd125)
 
 module i2c_clock_divider(
   input clk_in,
@@ -7,8 +7,8 @@ module i2c_clock_divider(
   output clk_out
   );
 
-reg [`WIDTH-1:0] r_reg;
-wire [`WIDTH-1:0] r_nxt;
+reg [`WIDTH_i2c-1:0] r_reg;
+wire [`WIDTH_i2c-1:0] r_nxt;
 reg clk_track;
 
 assign r_nxt = r_reg + 1;           
@@ -18,13 +18,13 @@ always @(posedge clk_in or posedge rst)
 begin
   if (rst)
   begin
-    r_reg <= `WIDTH'd0;
+    r_reg <= `WIDTH_i2c'd0;
     clk_track <= 1'b0;
   end
 
-  else if (r_nxt == `N)
+  else if (r_nxt == `N_i2c)
   begin
-    r_reg <= `WIDTH'd0;
+    r_reg <= `WIDTH_i2c'd0;
     clk_track <= ~clk_track;
   end
 
