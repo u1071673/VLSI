@@ -109,6 +109,7 @@ begin
 	next_anode2_en = 1'b1;
 	next_anode3_en = 1'b1;
 	next_count = count + 20'd1; // Rolls over.
+	next_bcd = 4'd0;
 	case (state)
 		STATE_DIGIT1_EN:
 		begin

@@ -28,8 +28,8 @@ assign B_BAR = ~B;
 assign C_BAR = ~C;
 assign D_BAR = ~D;
 
-assign a = A | B | (B & D) | (B_BAR & D_BAR);
-assign b = B_BAR | (C_BAR & D_BAR) | (C | D);
+assign a = A | C | (B & D) | (B_BAR & D_BAR);
+assign b = B_BAR | (C_BAR & D_BAR) | (C & D);
 assign c = B | C_BAR | D;
 assign d = (B_BAR & D_BAR) | (C & D_BAR) | (B & C_BAR & D) | (B_BAR & C) | A;
 assign e = (B_BAR & D_BAR) | (C & D_BAR);

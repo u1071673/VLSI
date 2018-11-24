@@ -51,13 +51,11 @@ seven_segment_controller uut(
     #100;
     // ADD STIMULUS HERE
     test = TEST1;
-    binary = -16'd162;
-    #100;
-
+    binary = -16'd126;
+    #20000000;
     test = TEST2;
     binary = 16'd38;
-    #100;
-
+    #20000000;
     #100;
 
   end
