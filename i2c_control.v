@@ -100,19 +100,19 @@ begin
 		case(state)
 			STATE_SOLAR:
 			begin
-				if(ready && slave_acknowledged) latched_solar_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_solar_celcius <= $signed(read_data[15:7]);
 			end
 			STATE_GREENHOUSE:
 			begin
-				if(ready && slave_acknowledged) latched_greenhouse_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_greenhouse_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_AMBIENT:
 			begin
-				if(ready && slave_acknowledged) latched_ambient_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_ambient_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_GEOTHERMAL:
 			begin
-				if(ready && slave_acknowledged) latched_geothermal_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_geothermal_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_NORTH:
 			begin
