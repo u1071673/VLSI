@@ -17,9 +17,9 @@ wire signed [7:0] stop_cooldown_th;
 wire signed [7:0] stop_heatup_th;
 
 // OUTPUT COMBINATIONAL LOGIC
-assign out = ((state == STATE_COOLDOWN) && (greenhouse_temp > stop_cooldown_th) && (!temp_g_greenhouse_temp)) || ((state == STATE_HEATUP) && (greenhouse_temp < stop_heatup_th) && temp_g_greenhouse_temp);
-assign stop_cooldown_th = cooldown_th - `TH;
-assign stop_heatup_th = heatup_th + `TH;
+assign out = ((state == STATE_COOLDOWN) && ($signed(greenhouse_temp) > $signed(stop_cooldown_th)) && (!temp_g_greenhouse_temp)) || ((state == STATE_HEATUP) && ($signed(greenhouse_temp) < $signed(stop_heatup_th)) && temp_g_greenhouse_temp);
+assign stop_cooldown_th = $signed(cooldown_th) - $signed(`TH));
+assign stop_heatup_th = $signed(heatup_th) + $signed(`TH);
 
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk or posedge rst)
@@ -39,12 +39,12 @@ begin
 	case(state)
 		STATE_IDLE:
 		begin
-			if(greenhouse_temp >= cooldown_th) next_state = STATE_COOLDOWN;
-			else if (greenhouse_temp <= heatup_th) next_state = STATE_HEATUP;
+			if($signed(greenhouse_temp) >= $signed(cooldown_th)) next_state = STATE_COOLDOWN;
+			else if ($signed(greenhouse_temp) <= $signed(heatup_th)) next_state = STATE_HEATUP;
 			else next_state = STATE_IDLE;
 		end
-		STATE_COOLDOWN: if(greenhouse_temp <= stop_cooldown_th) next_state = STATE_IDLE;
-		STATE_HEATUP: if(greenhouse_temp >= stop_heatup_th) next_state = STATE_IDLE;
+		STATE_COOLDOWN: if($signed(greenhouse_temp) <= $signed(stop_cooldown_th)) next_state = STATE_IDLE;
+		STATE_HEATUP: if($signed(greenhouse_temp) >= $signed(stop_heatup_th)) next_state = STATE_IDLE;
 		default:
 		begin
 			// TODO: Figure out what to do for default case.
