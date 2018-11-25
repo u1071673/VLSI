@@ -23,7 +23,7 @@ reg signed [7:0] actual_ambient_cooldown_th, next_actual_ambient_cooldown_th; /*
 reg signed [7:0] actual_ambient_heatup_th, next_actual_ambient_heatup_th; /* set only to value between -12 - 27  (default 16) */
 reg signed [7:0] actual_geothermal_cooldown_th, next_actual_geothermal_cooldown_th; /* set only to value between 32 - 50 (default 35) */
 reg signed [7:0] actual_geothermal_heatup_th, next_actual_geothermal_heatup_th; /* set only to value between -12 - 27  (default 16) */
-reg signed [7:0] latched_data_tx, next_data_tx;
+reg [7:0] latched_data_tx, next_data_tx;
 reg [7:0] state, next_state, mode, next_mode;
 reg initialized, latched_start_tx, next_start_tx;
 
@@ -187,7 +187,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_solar_cooldown_th;
+						next_data_tx = $unsigned(actual_solar_cooldown_th);
 						next_start_tx = 1'd1;
 					end
 					else
@@ -200,7 +200,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_solar_heatup_th;
+						next_data_tx = $unsigned(actual_solar_heatup_th);
 						next_start_tx = 1'd1;
 					end
 					else
@@ -213,7 +213,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_ambient_cooldown_th;
+						next_data_tx = $unsigned(actual_ambient_cooldown_th);
 						next_start_tx = 1'd1;
 					end
 					else
@@ -226,7 +226,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_ambient_heatup_th;
+						next_data_tx = $unsigned(actual_ambient_heatup_th);
 						next_start_tx = 1'd1;
 					end
 					else
@@ -239,7 +239,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_geothermal_cooldown_th;
+						next_data_tx = $unsigned(actual_geothermal_cooldown_th);
 						next_start_tx = 1'd1;
 					end
 					else
@@ -252,7 +252,7 @@ begin
 					if(idle_ready_tx)
 					begin
 						next_state = STATE_IDLE_BUFFER;
-						next_data_tx = actual_geothermal_heatup_th;
+						next_data_tx = $unsigned(actual_geothermal_heatup_th);
 						next_start_tx = 1'd1;
 					end
 					else
