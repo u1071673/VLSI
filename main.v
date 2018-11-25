@@ -110,7 +110,7 @@ i2c_control i2c_control_module(
 	.geothermal_celcius(geothermal_celcius)
 	);
 
-uart uart_module(
+uart_control uart_module(
 	.clk(uart_clk),
 	.rst(rst),
 	.rx(rx),
