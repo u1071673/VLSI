@@ -18,7 +18,7 @@ wire signed [7:0] stop_heatup_th;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign out = ((state == STATE_COOLDOWN) && ($signed(greenhouse_temp) > $signed(stop_cooldown_th)) && (!temp_g_greenhouse_temp)) || ((state == STATE_HEATUP) && ($signed(greenhouse_temp) < $signed(stop_heatup_th)) && temp_g_greenhouse_temp);
-assign stop_cooldown_th = $signed(cooldown_th) - $signed(`TH));
+assign stop_cooldown_th = $signed(cooldown_th) - $signed(`TH);
 assign stop_heatup_th = $signed(heatup_th) + $signed(`TH);
 
 // UPDATE STATE SEQUENTIAL LOGIC

@@ -72,7 +72,7 @@ begin
 		end
 		STATE_WORK:
 		begin
-			if(next_count == 5'd0) next_state = STATE_READY;
+			if(count == 5'd0) next_state = STATE_READY;
 			else 
 			begin
 				next_state = STATE_WORK;

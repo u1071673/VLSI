@@ -19,7 +19,7 @@ module seven_segment_controller (
 localparam [2:0] STATE_DIGIT1_EN = 4'd0, STATE_DIGIT2_EN = 4'd1, STATE_DIGIT3_EN = 4'd2, STATE_DIGIT4_EN = 4'd3;
 
 reg [1:0] state, next_state;
-reg [19:0] count, next_count; 
+reg [19:0] count;
 reg [3:0] latched_bcd, next_bcd;
 reg initialized;
 reg latched_anode0_en, next_anode0_en;
@@ -50,7 +50,7 @@ assign e_out = (state == STATE_DIGIT1_EN) ? 1'b0 : e;
 assign f_out = (state == STATE_DIGIT1_EN) ? 1'b0 : f;
 assign g_out = (state == STATE_DIGIT1_EN) ? sign : g;
 
-bcd #(.N(8)) uut(
+bcd #(.N(8)) bcd_module(
 	.clk(clk),
 	.rst(rst),
 	.binary(binary),
@@ -80,7 +80,7 @@ begin
 	else if(initialized)
 	begin
 		state <= next_state;
-		count <= next_count;
+		count <= count + 20'd1; // Rolls over
 		latched_anode0_en <= next_anode0_en;
 		latched_anode1_en <= next_anode1_en;
 		latched_anode2_en <= next_anode2_en;
@@ -108,7 +108,6 @@ begin
 	next_anode1_en = 1'b1;
 	next_anode2_en = 1'b1;
 	next_anode3_en = 1'b1;
-	next_count = count + 20'd1; // Rolls over.
 	next_bcd = 4'd0;
 	case (state)
 		STATE_DIGIT1_EN:

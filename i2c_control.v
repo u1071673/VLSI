@@ -139,14 +139,14 @@ begin
   		slave_addr <= 8'd0;
   		two_bytes <= 1'd0;
 
-latched_solar_celcius [8:0] <= $signed(9'sd0);
-latched_greenhouse_celcius [8:0] <= $signed(9'sd0);
-latched_ambient_celcius [8:0] <= $signed(9'sd0);
-latched_geothermal_celcius [8:0] <= $signed(9'sd0);
-latched_n_lux [15:0] <= 16'd0;
-latched_e_lux [15:0] <= 16'd0;
-latched_s_lux [15:0] <= 16'd0;
-latched_w_lux [15:0] <= 16'd0;
+$signed(latched_solar_celcius) <= $signed(9'd0);
+$signed(latched_greenhouse_celcius) <= $signed(9'd0);
+$signed(latched_ambient_celcius) <= $signed(9'd0);
+$signed(latched_geothermal_celcius) <= $signed(9'd0);
+latched_n_lux <= 16'd0;
+latched_e_lux <= 16'd0;
+latched_s_lux <= 16'd0;
+latched_w_lux <= 16'd0;
 rw <= 1'd0;
 start <= 1'd0;
 initialized <= 1'd1;
