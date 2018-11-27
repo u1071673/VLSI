@@ -44,7 +44,7 @@ begin
 		h <= next_h;
 		t <= next_t;
 		o <= next_o;
-		if(state == STATE_START) latched_binary <= binary;
+		if(state == STATE_START) latched_binary <= $unsigned(binary);
 	end
 	else 
 	begin
@@ -72,7 +72,7 @@ begin
 		end
 		STATE_WORK:
 		begin
-			if(next_count == 5'd0) next_state = STATE_READY;
+			if(count == 5'd0) next_state = STATE_READY;
 			else 
 			begin
 				next_state = STATE_WORK;
@@ -94,7 +94,7 @@ begin
 		end
 		STATE_READY:
 		begin
-			if(latched_binary != binary) next_state = STATE_START;
+			if(latched_binary != $unsigned(binary)) next_state = STATE_START;
 			else next_state = STATE_READY;
 			next_count = 5'd0;
 			next_h = h;

@@ -60,10 +60,10 @@ assign fractional = read_data[11:0];
 assign lsb_size = (16'd1 << {12'd0, exponent}) / 16'd100;
 assign calulated_lux = lsb_size * {4'd0, fractional};
 
-assign solar_celcius = latched_solar_celcius[8:1];
-assign greenhouse_celcius = latched_greenhouse_celcius[8:1];
-assign ambient_celcius = latched_ambient_celcius[8:1];
-assign geothermal_celcius = latched_geothermal_celcius[8:1];
+assign solar_celcius = $signed(latched_solar_celcius[8:1]);
+assign greenhouse_celcius = $signed(latched_greenhouse_celcius[8:1]);
+assign ambient_celcius = $signed(latched_ambient_celcius[8:1]);
+assign geothermal_celcius = $signed(latched_geothermal_celcius[8:1]);
 assign n_lux = latched_n_lux;
 assign e_lux = latched_e_lux;
 assign s_lux = latched_s_lux;
@@ -100,19 +100,19 @@ begin
 		case(state)
 			STATE_SOLAR:
 			begin
-				if(ready && slave_acknowledged) latched_solar_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_solar_celcius <= $signed(read_data[15:7]);
 			end
 			STATE_GREENHOUSE:
 			begin
-				if(ready && slave_acknowledged) latched_greenhouse_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_greenhouse_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_AMBIENT:
 			begin
-				if(ready && slave_acknowledged) latched_ambient_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_ambient_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_GEOTHERMAL:
 			begin
-				if(ready && slave_acknowledged) latched_geothermal_celcius <= read_data[15:7];
+				if(ready && slave_acknowledged) latched_geothermal_celcius <=  $signed(read_data[15:7]);
 			end
 			STATE_NORTH:
 			begin
@@ -138,20 +138,19 @@ begin
   		write_data <= 8'd0;
   		slave_addr <= 8'd0;
   		two_bytes <= 1'd0;
-// TODO: Iniztialized latched_ values with 0's
-latched_solar_celcius [8:0] <= 9'sd0;
-latched_greenhouse_celcius [8:0] <= 9'sd0;
-latched_ambient_celcius [8:0] <= 9'sd0;
-latched_geothermal_celcius [8:0] <= 9'sd0;
-latched_n_lux [15:0] <= 16'd0;
-latched_e_lux [15:0] <= 16'd0;
-latched_s_lux [15:0] <= 16'd0;
-latched_w_lux [15:0] <= 16'd0;
-rw <= 1'd0;
-start <= 1'd0;
-initialized <= 1'd1;
-end
-end
+  		latched_solar_celcius <= 9'sd0;
+  		latched_greenhouse_celcius <= 9'sd0;
+  		latched_ambient_celcius <= 9'sd0;
+  		latched_geothermal_celcius <= 9'sd0;
+  		latched_n_lux <= 16'd0;
+  		latched_e_lux <= 16'd0;
+  		latched_s_lux <= 16'd0;
+  		latched_w_lux <= 16'd0;
+  		rw <= 1'd0;
+  		start <= 1'd0;
+  		initialized <= 1'd1;
+  	end
+  end
 
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
 always@(state or ready)

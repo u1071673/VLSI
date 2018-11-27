@@ -110,20 +110,6 @@ i2c_control i2c_control_module(
 	.geothermal_celcius(geothermal_celcius)
 	);
 
-uart uart_module(
-	.clk(uart_clk),
-	.rst(rst),
-	.rx(rx),
-	.tx(tx),
-	.solar_th(solar_th),
-	.solar_cooldown_th(solar_cooldown_th),
-	.solar_heatup_th(solar_heatup_th),
-	.ambient_cooldown_th(ambient_cooldown_th),
-	.ambient_heatup_th(ambient_heatup_th),
-	.geothermal_cooldown_th(geothermal_cooldown_th),
-	.geothermal_heatup_th(geothermal_heatup_th)
-	);
-
 solar solar_module(
 	.clk(clk),
 	.rst(rst),
@@ -136,6 +122,20 @@ solar solar_module(
 	.me(move_east), 
 	.ms(move_south),
 	.mw(move_west)
+	);
+
+uart_controller uart_module(
+	.clk(uart_clk),
+	.rst(rst),
+	.rx(rx),
+	.tx(tx),
+	.solar_th(solar_th),
+	.solar_cooldown_th(solar_cooldown_th),
+	.solar_heatup_th(solar_heatup_th),
+	.ambient_cooldown_th(ambient_cooldown_th),
+	.ambient_heatup_th(ambient_heatup_th),
+	.geothermal_cooldown_th(geothermal_cooldown_th),
+	.geothermal_heatup_th(geothermal_heatup_th)
 	);
 
 // WINDOW MODULES
