@@ -36,4 +36,4 @@ assign e = (B_BAR & D_BAR) | (C & D_BAR);
 assign f = A | (C_BAR & D_BAR) | (B & C_BAR) | (B & D_BAR);
 assign g = (B_BAR & C) | (C & D_BAR) | (B & C_BAR) | (B & C_BAR) | A;
 
-endmodule;
+endmodule
