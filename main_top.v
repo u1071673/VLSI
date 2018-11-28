@@ -49,6 +49,56 @@ module main_top (
 	output wire geothermal_g_out
 	);
 
+wire clk_pad;
+wire rst_pad;
+wire rx_pad;
+wire sda_in_pad;
+wire scl_in_pad;
+wire sda_out_pad;
+wire scl_out_pad;
+wire tx_pad;
+wire window_open_pad;
+wire fan_on_pad;
+wire geothermal_on_pad;
+wire solarheater_on_pad;
+wire move_north_pad;
+wire move_east_pad;
+wire move_south_pad;
+wire move_west_pad;
+wire solar_anode0_en_pad;
+wire solar_anode1_en_pad;
+wire solar_anode2_en_pad;
+wire solar_anode3_en_pad;
+wire greenhouse_anode0_en_pad;
+wire greenhouse_anode1_en_pad;
+wire greenhouse_anode2_en_pad;
+wire greenhouse_anode3_en_pad;
+wire geothermal_anode0_en_pad;
+wire geothermal_anode1_en_pad;
+wire geothermal_anode2_en_pad;
+wire geothermal_anode3_en_pad;
+wire solar_a_out_pad;
+wire solar_b_out_pad;
+wire solar_c_out_pad;
+wire solar_d_out_pad;
+wire solar_e_out_pad;
+wire solar_f_out_pad;
+wire solar_g_out_pad;
+wire greehouse_a_out_pad;
+wire greehouse_b_out_pad;
+wire greehouse_c_out_pad;
+wire greehouse_d_out_pad;
+wire greehouse_e_out_pad;
+wire greehouse_f_out_pad;
+wire greehouse_g_out_pad;
+wire geothermal_a_out_pad;
+wire geothermal_b_out_pad;
+wire geothermal_c_out_pad;
+wire geothermal_d_out_pad;
+wire geothermal_e_out_pad;
+wire geothermal_f_out_pad;
+wire geothermal_g_out_pad;
+
 wire sda_en;
 wire scl_en;
 
