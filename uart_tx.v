@@ -50,6 +50,7 @@ always@(state or start or count or bit or latched_data)
 begin
   next_count = 1'b0;
   next_bit = 1'b1;
+  next_state = state;
   case(state)
     STATE_IDLE:
     begin

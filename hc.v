@@ -9,7 +9,7 @@ module hc(
 
 localparam STATE_2GE1 = 2'd0, STATE_1G2 = 2'd1;
 reg [1:0] state, next_state;
-
+reg initialized;
 
 // OUTPUT COMBINATIONAL LOGIC
 assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output high.
@@ -17,13 +17,15 @@ assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output hig
 // UPDATE STATE SEQUENTIAL LOGIC
 always@(posedge clk or posedge rst)
 begin
-	if(rst) state = STATE_2GE1;
-	else state = next_state;
+	if(rst) initialized <= 1'd0;
+	else if(initialized) state = next_state;
+	else state = STATE_2GE1; // Initialize
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
 always@(ts1 or ts2 or state)
 begin
+	next_state = state;
 	case(state)
 		STATE_2GE1:
 		begin

@@ -36,6 +36,7 @@ end
 // NEXT STATE COMBINATIONAL LOGIC
 always@(greenhouse_temp or state or cooldown_th or heatup_th or stop_cooldown_th or stop_heatup_th)
 begin
+	next_state = state;
 	case(state)
 		STATE_IDLE:
 		begin

@@ -61,6 +61,11 @@ end
 // NEXT STATE COMBINATIONAL LOGIC
 always@(state or abs_binary or latched_binary or binary or count or h or t or o)
 begin
+	next_state = state;
+	next_count = count;
+	next_h = h;
+	next_t = t;
+	next_o = t;
 	case(state)
 		STATE_START:
 		begin

@@ -42,6 +42,7 @@ end
 // NEXT STATE COMBINATIONAL LOGIC
 always@(lsn or lse or lss or lsw or state or lsn_th or lse_th or lss_th or lsw_th)
 begin
+	next_state = state;
 	case(state)
 		STATE_IDLE:
 		begin

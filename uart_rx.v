@@ -42,6 +42,7 @@ end
 always@(state or count or rx)
 begin
   next_count = 1'b0;
+  next_state = state;
   case(state)
     STATE_IDLE:
     begin

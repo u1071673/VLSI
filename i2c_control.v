@@ -160,6 +160,7 @@ end
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
 always@(state or ready)
 begin
+
 	next_start = 1'd0;
 	next_slave_addr = 7'd0;
 	next_rw = 1'd0;

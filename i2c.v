@@ -94,9 +94,10 @@ end
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
 always@(sda_in or state or start or count or latched_rw or latched_data or latched_addr or latched_two_bytes or sda_and_scl_high)
 begin
-  next_sda_enable = 1'b0;
-  next_scl_enable = 1'b0;
-  next_count = 1'b0;
+  next_state = state;
+  next_count = count;
+  next_scl_enable = scl_enable;
+  next_sda_enable = sda_enable;
   case(state)
     STATE_IDLE:
     begin

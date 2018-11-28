@@ -101,6 +101,7 @@ begin
 	next_actual_geothermal_cooldown_th = actual_geothermal_cooldown_th;
 	next_actual_geothermal_heatup_th = actual_geothermal_heatup_th;
 	next_state = STATE_IDLE;
+	next_mode = mode;
 	case(state)
 		STATE_IDLE:
 		begin
