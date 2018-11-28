@@ -138,19 +138,20 @@ begin
   		write_data <= 8'd0;
   		slave_addr <= 8'd0;
   		two_bytes <= 1'd0;
-  		latched_solar_celcius <= 9'sd0;
-  		latched_greenhouse_celcius <= 9'sd0;
-  		latched_ambient_celcius <= 9'sd0;
-  		latched_geothermal_celcius <= 9'sd0;
-  		latched_n_lux <= 16'd0;
-  		latched_e_lux <= 16'd0;
-  		latched_s_lux <= 16'd0;
-  		latched_w_lux <= 16'd0;
-  		rw <= 1'd0;
-  		start <= 1'd0;
-  		initialized <= 1'd1;
-  	end
-  end
+
+latched_solar_celcius <= $signed(latched_solar_celcius) & 9'd0;
+latched_greenhouse_celcius <= $signed(latched_greenhouse_celcius) & 9'd0;
+latched_ambient_celcius <= $signed(latched_ambient_celcius) & 9'd0;
+latched_geothermal_celcius <= $signed(latched_geothermal_celcius) & 9'd0;
+latched_n_lux <= 16'd0;
+latched_e_lux <= 16'd0;
+latched_s_lux <= 16'd0;
+latched_w_lux <= 16'd0;
+rw <= 1'd0;
+start <= 1'd0;
+initialized <= 1'd1;
+end
+end
 
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
 always@(state or ready)
