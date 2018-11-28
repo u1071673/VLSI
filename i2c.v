@@ -7,8 +7,10 @@ input wire rst,
 input wire start,
 input wire two_bytes, /* Set this to 1 for reading or writing two data bytes. 0 means only read or write one data byte */
 input wire rw, /* 0 = write, 1 = read */
-inout wire sda,
-inout wire scl,
+input wire sda_in,
+input wire scl_in,
+output wire sda_out,
+output wire scl_out,
 output wire [15:0] read_data, /* This is set to the data retrieved from the slave */
 output wire ready,
 output wire got_acknowledge
@@ -23,11 +25,11 @@ reg scl_enable, next_scl_enable, sda_enable, next_sda_enable, latched_rw;
 reg initialized;
 reg slave_acknowledged;
 
-wire sda_and_scl_high = (sda == 1'b1) && (scl == 1'b1);
+wire sda_and_scl_high = (sda_in == 1'b1 || sda_out == 1'b1) && (scl_in == 1'b1 || scl_out == 1'b1);
   
 // OUTPUT COMBINATIONAL LOGIC
-assign sda = sda_enable ? 1'b0 : 1'bz;
-assign scl = scl_enable && clk ? 1'b0 : 1'bz;
+assign sda_out = sda_enable ? 1'b0 : 1'b1;
+assign scl_out = scl_enable && clk ? 1'b0 : 1'b1;
 assign ready = (state == STATE_IDLE) && !(rst) && sda_and_scl_high;
 assign read_data = latched_rw ? latched_data : 16'bxxxxxxxxxxxxxxxx;
 assign got_acknowledge = slave_acknowledged;
@@ -62,7 +64,7 @@ begin
       STATE_R_MSBYTE, STATE_R_LSBYTE:
       begin
         slave_acknowledged <= 1'b1;
-        latched_data[count] <= (sda == 1'b1);
+        latched_data[count] <= (sda_in == 1'b1);
       end
       STATE_MASTER_WACK:
       begin
@@ -90,7 +92,7 @@ begin
 end
 
 // NEXT STATE COMBINATIONAL LOGIC (Only set 'next_' wires)
-always@(sda or scl or state or start or count or latched_rw or latched_data or latched_addr or latched_two_bytes or sda_and_scl_high)
+always@(sda_in or state or start or count or latched_rw or latched_data or latched_addr or latched_two_bytes or sda_and_scl_high)
 begin
   next_sda_enable = 1'b0;
   next_scl_enable = 1'b0;
@@ -137,7 +139,7 @@ begin
   STATE_SLAVE_WACK: // slave pulls sda low for ack.
   begin
     next_scl_enable = 1'b1;
-    if(sda == 1'b1) // ~ACK
+    if(sda_in == 1'b1) // ~ACK
     begin
       next_state = STATE_STOP1;
       next_sda_enable = 1'b1;

@@ -3,8 +3,8 @@ module main_top (
 	input wire clk,
 	input wire rst,
 	input wire rx,
-	inout wire sda,
 	inout wire scl,
+	inout wire sda,
 	output wire tx,
 	output wire window_open,
 	output wire fan_on,
@@ -22,10 +22,6 @@ module main_top (
 	output wire greenhouse_anode1_en,
 	output wire greenhouse_anode2_en,
 	output wire greenhouse_anode3_en,
-	output wire ambient_anode0_en,
-	output wire ambient_anode1_en,
-	output wire ambient_anode2_en,
-	output wire ambient_anode3_en,
 	output wire geothermal_anode0_en,
 	output wire geothermal_anode1_en,
 	output wire geothermal_anode2_en,
@@ -44,13 +40,6 @@ module main_top (
 	output wire greehouse_e_out,
 	output wire greehouse_f_out,
 	output wire greehouse_g_out,
-	output wire ambient_a_out,
-	output wire ambient_b_out,
-	output wire ambient_c_out,
-	output wire ambient_d_out,
-	output wire ambient_e_out,
-	output wire ambient_f_out,
-	output wire ambient_g_out,
 	output wire geothermal_a_out,
 	output wire geothermal_b_out,
 	output wire geothermal_c_out,
@@ -60,20 +49,23 @@ module main_top (
 	output wire geothermal_g_out
 	);
 
-// PWR and GND
-pad_vdd pad_vdd0 ();
-pad_gnd pad_gnd0 ();
-pad_vdd pad_vdd_i2c_pullup ();
+wire sda_en;
+wire scl_en;
 
+assign sda_en = sda_out == 1'd0;
+assign scl_en = scl_out == 1'd0;
+
+// PWR and GND
+pad_vdd pad_vdd0();
+pad_gnd pad_gnd0();
+pad_vdd pad_vdd_i2c_pullup();
 // INPUTS
 pad_in pad_in0(.pad(clk), .DataIn(clk_pad));
 pad_in pad_in1(.pad(rst), .DataIn(rst_pad));
 pad_in pad_in2(.pad(rx), .DataIn(rx_pad));
- 
 // INOUT
-pad_inout pad_inout0(.pad(sda), .DataIn(sda), .out(sda)); // TODO: what do we do for inout?
-pad_inout pad_inout1(.pad(scl), .DataIn(scl), .out(scl)); // TODO: what do we do for inout?
-
+pad_bidirhe_buffered pad_inout0(.en(sda_en), .out(sda_out_pad), .in(sda_in_pad), .pad(sda));
+pad_bidirhe_buffered pad_inout1(.en(scl_en), .out(scl_out_pad), .in(scl_in_pad), .pad(scl));
 // OUTPUTS
 pad_out_buffered pad_out0(.pad(tx), .out(tx_pad));
 pad_out_buffered pad_out1(.pad(window_open), .out(window_open_pad));
@@ -92,10 +84,6 @@ pad_out_buffered pad_out13(.pad(greenhouse_anode0_en), .out(greenhouse_anode0_en
 pad_out_buffered pad_out14(.pad(greenhouse_anode1_en), .out(greenhouse_anode1_en_pad));
 pad_out_buffered pad_out15(.pad(greenhouse_anode2_en), .out(greenhouse_anode2_en_pad));
 pad_out_buffered pad_out16(.pad(greenhouse_anode3_en), .out(greenhouse_anode3_en_pad));
-pad_out_buffered pad_out17(.pad(ambient_anode0_en), .out(ambient_anode0_en_pad));
-pad_out_buffered pad_out18(.pad(ambient_anode1_en), .out(ambient_anode1_en_pad));
-pad_out_buffered pad_out19(.pad(ambient_anode2_en), .out(ambient_anode2_en_pad));
-pad_out_buffered pad_out20(.pad(ambient_anode3_en), .out(ambient_anode3_en_pad));
 pad_out_buffered pad_out21(.pad(geothermal_anode0_en), .out(geothermal_anode0_en_pad));
 pad_out_buffered pad_out22(.pad(geothermal_anode1_en), .out(geothermal_anode1_en_pad));
 pad_out_buffered pad_out23(.pad(geothermal_anode2_en), .out(geothermal_anode2_en_pad));
@@ -114,13 +102,6 @@ pad_out_buffered pad_out35(.pad(greehouse_d_out), .out(greehouse_d_out_pad));
 pad_out_buffered pad_out36(.pad(greehouse_e_out), .out(greehouse_e_out_pad));
 pad_out_buffered pad_out37(.pad(greehouse_f_out), .out(greehouse_f_out_pad));
 pad_out_buffered pad_out38(.pad(greehouse_g_out), .out(greehouse_g_out_pad));
-pad_out_buffered pad_out39(.pad(ambient_a_out), .out(ambient_a_out_pad));
-pad_out_buffered pad_out40(.pad(ambient_b_out), .out(ambient_b_out_pad));
-pad_out_buffered pad_out41(.pad(ambient_c_out), .out(ambient_c_out_pad));
-pad_out_buffered pad_out42(.pad(ambient_d_out), .out(ambient_d_out_pad));
-pad_out_buffered pad_out43(.pad(ambient_e_out), .out(ambient_e_out_pad));
-pad_out_buffered pad_out44(.pad(ambient_f_out), .out(ambient_f_out_pad));
-pad_out_buffered pad_out45(.pad(ambient_g_out), .out(ambient_g_out_pad));
 pad_out_buffered pad_out46(.pad(geothermal_a_out), .out(geothermal_a_out_pad));
 pad_out_buffered pad_out47(.pad(geothermal_b_out), .out(geothermal_b_out_pad));
 pad_out_buffered pad_out48(.pad(geothermal_c_out), .out(geothermal_c_out_pad));
@@ -128,7 +109,6 @@ pad_out_buffered pad_out49(.pad(geothermal_d_out), .out(geothermal_d_out_pad));
 pad_out_buffered pad_out50(.pad(geothermal_e_out), .out(geothermal_e_out_pad));
 pad_out_buffered pad_out51(.pad(geothermal_f_out), .out(geothermal_f_out_pad));
 pad_out_buffered pad_out52(.pad(geothermal_g_out), .out(geothermal_g_out_pad));
-
 // PAD CORNERS
 pad_corner corner0 ();
 pad_corner corner1 ();
@@ -140,8 +120,10 @@ main main_dut(
 	.clk(clk_pad),
 	.rst(rst_pad),
 	.rx(rx_pad),
-	.sda(sda_pad),
-	.scl(scl_pad),
+	.sda_in(sda_in_pad),
+	.scl_in(scl_in_pad),
+	.sda_out(sda_out_pad),
+	.scl_out(scl_out_pad),
 	.tx(tx_pad),
 	.window_open(window_open_pad),
 	.fan_on(fan_on_pad),
@@ -159,10 +141,6 @@ main main_dut(
 	.greenhouse_anode1_en(greenhouse_anode1_en_pad),
 	.greenhouse_anode2_en(greenhouse_anode2_en_pad),
 	.greenhouse_anode3_en(greenhouse_anode3_en_pad),
-	.ambient_anode0_en(ambient_anode0_en_pad),
-	.ambient_anode1_en(ambient_anode1_en_pad),
-	.ambient_anode2_en(ambient_anode2_en_pad),
-	.ambient_anode3_en(ambient_anode3_en_pad),
 	.geothermal_anode0_en(geothermal_anode0_en_pad),
 	.geothermal_anode1_en(geothermal_anode1_en_pad),
 	.geothermal_anode2_en(geothermal_anode2_en_pad),
@@ -181,13 +159,6 @@ main main_dut(
 	.greehouse_e_out(greehouse_e_out_pad),
 	.greehouse_f_out(greehouse_f_out_pad),
 	.greehouse_g_out(greehouse_g_out_pad),
-	.ambient_a_out(ambient_a_out_pad),
-	.ambient_b_out(ambient_b_out_pad),
-	.ambient_c_out(ambient_c_out_pad),
-	.ambient_d_out(ambient_d_out_pad),
-	.ambient_e_out(ambient_e_out_pad),
-	.ambient_f_out(ambient_f_out_pad),
-	.ambient_g_out(ambient_g_out_pad),
 	.geothermal_a_out(geothermal_a_out_pad),
 	.geothermal_b_out(geothermal_b_out_pad),
 	.geothermal_c_out(geothermal_c_out_pad),

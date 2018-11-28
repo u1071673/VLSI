@@ -10,8 +10,10 @@
 module i2c_control (
 	input wire clk,
 	input wire rst,
-	inout wire sda,
-	inout wire scl,
+	input sda_in,
+	input scl_in,
+	output sda_out,
+	output scl_out,
 	output wire signed [7:0] solar_celcius,
 	output wire signed [7:0] greenhouse_celcius,
 	output wire signed [7:0] ambient_celcius,
@@ -77,8 +79,10 @@ i2c i2c_module(
 	.start(start),
 	.two_bytes(two_bytes), /* Set this to 1 for reading or writing two write_data bytes. 0 means only read or write one write_data byte */
 	.rw(rw), /* 0 = write, 1 = read */
-	.sda(sda),
-	.scl(scl),
+	.sda_in(sda_in),
+	.scl_in(scl_in),
+	.sda_out(sda_out),
+	.scl_out(scl_out),
 	.read_data(read_data), /* This is set to the write_data retrieved from the slave */
 	.ready(ready),
 	.got_acknowledge(slave_acknowledged)
