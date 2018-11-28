@@ -3,8 +3,10 @@ module main(
 	input wire clk,
 	input wire rst,
 	input wire rx,
-	inout wire sda,
-	inout wire scl,
+	input wire sda_in,
+	input wire scl_in,
+	output wire sda_out,
+	output wire scl_out,
 	output wire tx,
 	output wire window_open,
 	output wire fan_on,
@@ -22,10 +24,6 @@ module main(
 	output wire greenhouse_anode1_en,
 	output wire greenhouse_anode2_en,
 	output wire greenhouse_anode3_en,
-	output wire ambient_anode0_en,
-	output wire ambient_anode1_en,
-	output wire ambient_anode2_en,
-	output wire ambient_anode3_en,
 	output wire geothermal_anode0_en,
 	output wire geothermal_anode1_en,
 	output wire geothermal_anode2_en,
@@ -44,13 +42,6 @@ module main(
 	output wire greehouse_e_out,
 	output wire greehouse_f_out,
 	output wire greehouse_g_out,
-	output wire ambient_a_out,
-	output wire ambient_b_out,
-	output wire ambient_c_out,
-	output wire ambient_d_out,
-	output wire ambient_e_out,
-	output wire ambient_f_out,
-	output wire ambient_g_out,
 	output wire geothermal_a_out,
 	output wire geothermal_b_out,
 	output wire geothermal_c_out,
@@ -98,8 +89,10 @@ uart_clock_divider uart_clock_divider_module(
 i2c_control i2c_control_module(
 	.clk(i2c_clk),
 	.rst(rst),
-	.sda(sda),
-	.scl(scl),
+	.sda_in(sda_in),
+	.scl_in(scl_in),
+	.sda_out(sda_out),
+	.scl_out(scl_out),
 	.n_lux(n_lux),
 	.e_lux(e_lux),
 	.s_lux(s_lux),
@@ -230,24 +223,6 @@ seven_segment_controller greenhouse_sev_seg(
 	.e_out(greehouse_e_out),
 	.f_out(greehouse_f_out),
 	.g_out(greehouse_g_out)
-	);
-
-// AMBIENT_CELCIUS SEVEN SEG
-seven_segment_controller ambient_sev_seg(
-	.clk(clk),
-	.rst(rst),
-	.binary(ambient_celcius),
-	.anode0_en(ambient_anode0_en),
-	.anode1_en(ambient_anode1_en),
-	.anode2_en(ambient_anode2_en),
-	.anode3_en(ambient_anode3_en),
-	.a_out(ambient_a_out),
-	.b_out(ambient_b_out),
-	.c_out(ambient_c_out),
-	.d_out(ambient_d_out),
-	.e_out(ambient_e_out),
-	.f_out(ambient_f_out),
-	.g_out(ambient_g_out)
 	);
 
 // GEOTHERMAL_CELCIUS SEVEN SEG
