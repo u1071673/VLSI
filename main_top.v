@@ -52,8 +52,8 @@ module main_top (
 wire sda_en;
 wire scl_en;
 
-assign sda_en = sda_out == 1'd0;
-assign scl_en = scl_out == 1'd0;
+assign sda_en = sda_out_pad == 1'd0;
+assign scl_en = scl_out_pad == 1'd0;
 
 // PWR and GND
 pad_vdd pad_vdd0();
