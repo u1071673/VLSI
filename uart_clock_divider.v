@@ -1,5 +1,5 @@
-`define WIDTH 261
-`define N (`WIDTH'd521)
+`define WIDTH 2604
+`define N (`WIDTH'd5208)
 
 module uart_clock_divider(
   input clk_in,
