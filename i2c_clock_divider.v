@@ -1,5 +1,5 @@
-`define WIDTH_i2c 63
-`define N_i2c (`WIDTH_i2c'd125)
+`define WIDTH_i2c 7
+`define N_i2c (`WIDTH_i2c'd13)
 
 module i2c_clock_divider(
   input clk_in,

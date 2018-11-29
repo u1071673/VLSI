@@ -30,7 +30,7 @@ pad_bidirhe pad_bidirhe0(.EN(en), .DataOut(out_buf), .DataIn(in), .pad(pad));
 
 endmodule // pad_bidirhe_buffered
 
-module main_top (
+module main_mapped_pads (
 	input wire clk,
 	input wire rst,
 	input wire rx,
@@ -133,8 +133,8 @@ wire geothermal_g_out_pad;
 wire sda_en;
 wire scl_en;
 
-assign sda_en = sda_out_pad == 1'd0;
-assign scl_en = scl_out_pad == 1'd0;
+INVX1 invsda (.A(sda_out_pad), .Z(sda_en));
+INVX1 invscl (.A(sda_out_pad), .Z(scl_en));
 
 // PWR and GND
 pad_vdd pad_vdd0();
