@@ -18,8 +18,13 @@ assign out = (state == STATE_1G2); // If ts1 is greater than ts2 then output hig
 always@(posedge clk or posedge rst)
 begin
 	if(rst) initialized <= 1'd0;
-	else if(initialized) state = next_state;
-	else state = STATE_2GE1; // Initialize
+	else if(initialized) state <= next_state;
+	else 
+	begin 
+		state <= STATE_2GE1; // Initialize
+		initialized <= 1'd1; 
+	end
+	
 end
 
 // NEXT STATE COMBINATIONAL LOGIC
