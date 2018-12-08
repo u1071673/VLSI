@@ -236,6 +236,7 @@ begin
     else 
     begin
       next_sda_enable = 1'b1;
+      next_scl_enable = 1'b0; // Keep sda low and let scl high so we can do start bit.
       next_state = STATE_STOP1; 
     end
   end
@@ -243,16 +244,21 @@ begin
   STATE_STOP1:
   begin
     next_sda_enable = 1'b1; // Keep sda low and let scl high so we can do start bit.
+    next_scl_enable = 1'b0;
     next_state = STATE_STOP2;
   end
 
   STATE_STOP2:
   begin
+    next_sda_enable = 1'b0; // Keep sda low and let scl high so we can do start bit.
+    next_scl_enable = 1'b0;
     next_state = STATE_IDLE; // Here, scl is already high, now release sda to signal stop bit and go back to idle.
   end
 
   default:
   begin
+    next_scl_enable = 1'b0;
+    next_sda_enable = 1'b0;
     next_state = STATE_IDLE;
   end
 

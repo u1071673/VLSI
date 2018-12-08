@@ -13,22 +13,26 @@ module i2c_tb;
   reg clk;
   reg start;
   reg two_bytes;
+  reg sda_in;
+  reg scl_in;
   reg [6:0] addr;
   reg [15:0] data;
 
   // OUTPUTS
-  wire sda;
-  wire scl;
+  wire sda_out;
+  wire scl_out;
   wire ready;
   wire [15:0] read_data;
 
   // INSTANTIATE THE UNIT UNDER TEST (UUT)
   i2c uut(
-    .sda(sda),
+    .scl_in(scl_in),
+    .sda_in(sda_in),
+    .scl_out(scl_out),
+    .sda_out(sda_out),
     .ready(ready),
     .rst(rst),
     .start(start),
-    .scl(scl),
     .addr(addr),
     .data(data),
     .two_bytes(two_bytes),
@@ -38,14 +42,13 @@ module i2c_tb;
     );
 
   always #2.5 clk = ~clk;
-  assign pull_sda_low =   (
-                         ((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
-                          ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count]) ||
-                          test == TEST9 || test == TEST11
-                          );
-  
-  assign sda = pull_sda_low ? 1'b0 : 1'bz;
-  assign scl = test == TEST10 || test == TEST11 ? 1'b0 : 1'bz;
+  always@(*)
+  begin
+    sda_in = (((test == TEST5 || test == TEST6 || test == TEST7|| test == TEST8) && uut.state == 4 && bytes_written < 1) || // Slave acknowedge states
+              ((uut.state == 7 || uut.state == 8) && ~transmit_data[uut.count]) ||
+               test == TEST9 || test == TEST11) ? 1'b0 : 1'b1;
+    scl_in = test == TEST10 || test == TEST11 ? 1'b0 : 1'bz;
+  end
 
   always@(posedge uut.state)
   begin
@@ -86,7 +89,7 @@ module i2c_tb;
     rw = 0;
     two_bytes = 1;
     data  = 16'haa55;
-    transmit_data = 16'h0000; 
+    transmit_data = 16'h0000;
     start = 1; #5;
     start = 0; #5;
 
@@ -136,7 +139,7 @@ module i2c_tb;
     rw = 1;
     two_bytes = 0;
     data  = 16'h0000;
-    transmit_data = 16'ha7b8; 
+    transmit_data = 16'ha7b8;
     start = 1; #5;
     start = 0; #5;
 
